@@ -253,45 +253,27 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			if (stripos($body, 'cal:calendar-data'))  {  // sabre.io 
                     $Tag = '//cal:calendar-data';
             }
-			if (stripos($body, '<calendar-data'))  {  // mailbox.org , md2002 22.01.19
-					$Tag = '//calendar-data';
-					if (stripos($calendar_url, 'dav.mailbox.org') > 0)	{
-						$xmlStr = print_r($body, true);
-						$xmlStr = str_replace('<![CDATA[', '', $xmlStr);    // remove CDATA cruft that prevents $xml->xpath from working
-						$xmlStr = str_replace(']]>', '', $xmlStr);
-						$xmlStr = str_replace('xmlns=', 'ns=', $xmlStr); // see comments on http://php.net/manual/de/simplexmlelement.xpath.php
-						$corrStr = explode("\n", $xmlStr);
-						$xmlStr = '';
-						foreach ($corrStr as $line) {
-							$index = stripos($line, "<calendar-data");
-							if ($index > 0) {
-								$line = substr($line, $index);  // remove all leading cruft that prevents $xml->xpath from working
-							}
-							$index = stripos($line, "/calendar-data>");
-							if ($index > 0) {
-								$line = "</calendar-data>"."\n";    //  remove all trailing cruft that prevents $xml->xpath from working
-							}
-							//  print ("Index:$index"." Line:$line"."\n");
-							$xmlStr .= $line."\n";
-						}
-						print_r($xmlStr);
-						//exit();
-						$xml = new SimpleXMLElement($xmlStr);   // (re-)create proper xml Object
-						$body = $xml;	// and copy back to $body, which is used in any case
-					}
+			if (stripos($body, '<calendar-data'))  {  // mailbox.org OX
+                    $Tag = '//calendar-data';
             }
 			if ($LogEnabeled) { 
 				fwrite($loghandle, "Tag:".$Tag."\n");
 			}
-			
-			$xml = simplexml_load_string($body);	// use $body here, NOT print_r($body) !!
-			//   $data = $xml->xpath('//cal:calendar-data');
-			$data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
-			$data_r = print_r($data, true);
-			if ($LogEnabeled) { 
-                fwrite($loghandle, "data:\n");
-				fwrite($loghandle, ($data_r));
-			}
+			if (stripos($body, '<calendar-data'))  {  // mailbox.org , md2002 22.01.19
+                if (stripos($calendar_url, 'dav.mailbox.org'))	{
+                    $xmlStr = $body_r;
+                    $xmlStr = str_replace('<![CDATA[', '', $xmlStr);    // remove CDATA cruft that prevents $xml->xpath from working
+                    $xmlStr = str_replace(']]>', '', $xmlStr);
+                    $xmlStr = str_replace('xmlns=', 'ns=', $xmlStr); // see comments on http://php.net/manual/de/simplexmlelement.xpath.php
+                    //  print($xmlStr);
+                    if ($LogEnabeled)   fwrite($loghandle, $xmlStr);
+                    $xml = new SimpleXMLElement($xmlStr);   // (re-)create proper xml Object
+                    $data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
+                }
+            }   else    {
+                $xml = simplexml_load_string($body);	// use $body here, NOT print_r($body) !!
+                $data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
+            }
 			if (is_null($data))	{	// issue Warning if $body cannot be parsed
 				$handle = fopen($ICalFile, 'w') or wp_die('Cannot open file:  '.$ICalFile);
 				fwrite($handle, "ERROR: Your Server's response is invalid and cannot be parsed - please enable Logging and check the Logfile !\n");
@@ -300,6 +282,11 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				_e("ERROR: Your Server's response is invalid and cannot be parsed - please enable Logging and check the Logfile !");
 				echo "</p>";
 				return;
+			}
+			$data_r = print_r($data, true);
+			if ($LogEnabeled) { 
+                fwrite($loghandle, "data:\n");
+				fwrite($loghandle, ($data_r));
 			}
 			
 			// create valid ICS File with only ONE Vcalendar !
