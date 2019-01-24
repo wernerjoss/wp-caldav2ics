@@ -15,7 +15,7 @@ Automatically create ICS File from CalDav Calendar
 Ever thought about to use your (remote) CalDav Calendar as an automatic data source for your favourite WP Calendar Plugin ?
 Searched for a Plugin that would provide this functionality in the WP Plugins Directory and found nothing useful ?
 Well, in case of 'Yes' to both questions, this is for You :) .
-Just read the whole story at <a href="https://hoernerfranzracing.de/werner/?page_id=1958">hoernerfranzracing.de</a> to check out if this will fit your needs...
+Just read the whole story at https://hoernerfranzracing.de/werner/?page_id=1958 to check out if this will fit your needs...
 
 == Installation ==
 FROM YOUR WORDPRESS DASHBOARD
@@ -25,7 +25,7 @@ FROM YOUR WORDPRESS DASHBOARD
 3. Activate WP-CalDav2ICS from your Plugins page.
 4. Go to the Plugin Admin Page and provide the required Settings, then press 'Save Changes'
 5. Check correct working ( = ICS File created from your CalDav Calendar at the desired Intervals)
-6. If anything goes wrong, re-check your Settings, enable Logging, check WP Cron Events to have bl_cron_hook running as planned, use <a href="https://wordpress.org/plugins/wp-crontrol/">WP Crontrol</a> (or similar Plugin) for that
+6. If anything goes wrong, re-check your Settings, enable Logging, check WP Cron Events to have bl_cron_hook running as planned, use https://wordpress.org/plugins/wp-crontrol (or similar Plugin) for that
 
 FROM WORDPRESS.ORG
 
@@ -48,6 +48,18 @@ Install WP Crontrol and check scheduled Cron Jobs, see screenshot #2
 Make sure the URL is not an IP Address in the 192.168.xx Range (or other Local Network) as this is not accepted by the URL Validation function.
 Rather add this Address to your /etc/hosts File and associate it with a host Name.
 
+= Upon Submit of Server URL and Credentials in the Backend, I get an Error Message stating my Server's response is invalid and cannot be parsed
+
+This means exactly what is stated: Unfortunately, it turns out that CalDav Servers often vary significantly in the Structure of their response.
+Currently supported are the following Servers:
+- Baikal/Sabre.io
+- Synology Nas
+- mailbox.org/OX
+So, if you run into this issue, you can:
+- Open an Issue on the support Page: https://wordpress.org/support/plugin/wp-caldav2ics providing the contents of the Logfile and hope for getting it fixed (which usually means providing access to such a brand of Server you are using)
+or
+- fix it yourself following the famous Motto 'use the source, Luke' :) - in that case, patches are welcome !
+
 == Screenshots ==
 
 1. Plugin Admin Page
@@ -55,7 +67,8 @@ Rather add this Address to your /etc/hosts File and associate it with a host Nam
 
 == Changelog ==
 = 1.0.3 =
-Fix another alternative Server Response Issue (Open Xchange ?)
+Fix another alternative Server Response Issue (mailbox.org/Open Xchange)
+Update FAQ
 Strip Username/Password from Logfile
 
 = 1.0.2 =
