@@ -245,35 +245,35 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			
 			// Get the useful part of the response
 			
-			// first check which Tag the Server returns to mark calendar data    13.01.19
-			$Tag = '//cal:calendar-data';    // Default
-			if (stripos($body, 'c:calendar-data'))  {    //  synology nas
-                    $Tag = '//C:calendar-data';
-            }
+			// first check which Tag the Server returns to mark calendar data	13.01.19
+			$Tag = '//cal:calendar-data';	// Default
+			if (stripos($body, 'c:calendar-data'))  {	//  synology nas
+					$Tag = '//C:calendar-data';
+			}
 			if (stripos($body, 'cal:calendar-data'))  {  // sabre.io 
-                    $Tag = '//cal:calendar-data';
-            }
+					$Tag = '//cal:calendar-data';
+			}
 			if (stripos($body, '<calendar-data'))  {  // mailbox.org OX
-                    $Tag = '//calendar-data';
-            }
+					$Tag = '//calendar-data';
+			}
 			if ($LogEnabeled) { 
 				fwrite($loghandle, "Tag:".$Tag."\n");
 			}
 			if (stripos($body, '<calendar-data'))  {  // mailbox.org , md2002 22.01.19
-                if (stripos($calendar_url, 'dav.mailbox.org'))	{
-                    $xmlStr = $body_r;
-                    $xmlStr = str_replace('<![CDATA[', '', $xmlStr);    // remove CDATA cruft that prevents $xml->xpath from working
-                    $xmlStr = str_replace(']]>', '', $xmlStr);
-                    $xmlStr = str_replace('xmlns=', 'ns=', $xmlStr); // see comments on http://php.net/manual/de/simplexmlelement.xpath.php
-                    //  print($xmlStr);
-                    if ($LogEnabeled)   fwrite($loghandle, $xmlStr);
-                    $xml = new SimpleXMLElement($xmlStr);   // (re-)create proper xml Object
-                    $data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
-                }
-            }   else    {
-                $xml = simplexml_load_string($body);	// use $body here, NOT print_r($body) !!
-                $data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
-            }
+				if (stripos($calendar_url, 'dav.mailbox.org'))	{
+					$xmlStr = $body_r;
+					$xmlStr = str_replace('<![CDATA[', '', $xmlStr);	// remove CDATA cruft that prevents $xml->xpath from working
+					$xmlStr = str_replace(']]>', '', $xmlStr);
+					$xmlStr = str_replace('xmlns=', 'ns=', $xmlStr); // see comments on http://php.net/manual/de/simplexmlelement.xpath.php
+					//  print($xmlStr);
+					if ($LogEnabeled)   fwrite($loghandle, $xmlStr);
+					$xml = new SimpleXMLElement($xmlStr);   // (re-)create proper xml Object
+					$data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
+				}
+			}   else	{
+				$xml = simplexml_load_string($body);	// use $body here, NOT print_r($body) !!
+				$data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
+			}
 			if (is_null($data))	{	// issue Warning if $body cannot be parsed
 				$handle = fopen($ICalFile, 'w') or wp_die('Cannot open file:  '.$ICalFile);
 				fwrite($handle, "ERROR: Your Server's response is invalid and cannot be parsed - please enable Logging and check the Logfile !\n");
@@ -285,7 +285,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			}
 			$data_r = print_r($data, true);
 			if ($LogEnabeled) { 
-                fwrite($loghandle, "data:\n");
+				fwrite($loghandle, "data:\n");
 				fwrite($loghandle, ($data_r));
 			}
 			
