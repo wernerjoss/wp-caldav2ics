@@ -270,11 +270,11 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 					$xml = new SimpleXMLElement($xmlStr);   // (re-)create proper xml Object
 					$data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
 				}
-			}   else	{
+			}   else	 {  // all others (so far) can be handeled via $body
 				$xml = simplexml_load_string($body);	// use $body here, NOT print_r($body) !!
 				$data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
 			}
-			if (is_null($data))	{	// issue Warning if $body cannot be parsed
+			if (false == $data)	{	// issue Warning if $body cannot be parsed
 				$handle = fopen($ICalFile, 'w') or wp_die('Cannot open file:  '.$ICalFile);
 				fwrite($handle, "ERROR: Your Server's response is invalid and cannot be parsed - please enable Logging and check the Logfile !\n");
 				fclose($handle);
@@ -467,7 +467,5 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		</form>
 		</div>
 		<?php
-
-	}
-	
+    }
 }
