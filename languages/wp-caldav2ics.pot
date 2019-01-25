@@ -1,0 +1,148 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WP-Caldav2ICS\n"
+"POT-Creation-Date: 2018-10-21 09:49+0100\n"
+"PO-Revision-Date: 2018-10-21 13:23+0100\n"
+"Last-Translator: Werner Joss\n"
+"Language-Team: Werner Joss\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.10\n"
+"X-Poedit-Basepath: ../\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: ../Caldav2ics_OptionsManager.php:266 ../Caldav2ics_Plugin.php:329
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: ../Caldav2ics_OptionsManager.php:286 ../Caldav2ics_Plugin.php:360
+msgid "Settings"
+msgstr ""
+
+#: ../Caldav2ics_OptionsManager.php:318 ../Caldav2ics_Plugin.php:414
+msgid "Save Changes"
+msgstr ""
+
+#: ../Caldav2ics_OptionsManager.php:376
+msgid "true"
+msgstr ""
+
+#: ../Caldav2ics_OptionsManager.php:378
+msgid "false"
+msgstr ""
+
+#: ../Caldav2ics_OptionsManager.php:381
+msgid "Administrator"
+msgstr ""
+
+#: ../Caldav2ics_OptionsManager.php:383
+msgid "Editor"
+msgstr ""
+
+#: ../Caldav2ics_OptionsManager.php:385
+msgid "Author"
+msgstr ""
+
+#: ../Caldav2ics_OptionsManager.php:387
+msgid "Contributor"
+msgstr ""
+
+#: ../Caldav2ics_OptionsManager.php:389
+msgid "Subscriber"
+msgstr ""
+
+#: ../Caldav2ics_OptionsManager.php:391
+msgid "Anyone"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:32
+msgid "CalDav Calendar URL*"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:33
+msgid "CalDav Username*"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:34
+msgid "CalDav Password*"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:35
+msgid "Cron Interval"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:37
+msgid "enable Logging"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:38
+msgid "ICS File"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:114
+msgid "Caldav2ICS Plugin activated - "
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:116
+msgid "Be sure to set correct Values in Plugin Admin Page !"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:346
+msgid "Settings Updated - please check Your generated ICS File at: "
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:348
+msgid ""
+"(In case anything does not work as expected, please enable Logging and check "
+"the "
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:396
+msgid "Error - You have currently one or more invalid mandatory Options set:"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:401
+msgid ""
+"Note: Settings that end with * are mandatory, all others are optional, which "
+"will be replaced by Defaults, if not specified."
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:402
+msgid "Defaults are:"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:404
+msgid "Cron Interval: daily"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:406
+msgid "enable Logging: false"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:408
+msgid "ICS File: calendar.ics"
+msgstr ""
+
+#: ../Caldav2ics_Plugin.php:410
+msgid ""
+"ICS File must be specified without PATH, it will be stored in uploads/"
+"calendars. Logfile (if Logging enabeled) will be cron.log in PluginDir."
+msgstr ""
+
+#: ../wp-caldav2ics.php:29
+msgid ""
+"Error: plugin \"WP-CalDav2ICS\" requires a newer version of PHP to be "
+"running."
+msgstr ""
+
+#: ../wp-caldav2ics.php:30
+msgid "Minimal version of PHP required: "
+msgstr ""
+
+#: ../wp-caldav2ics.php:31
+msgid "Your server's PHP version: "
+msgstr ""
