@@ -33,6 +33,15 @@ FROM WORDPRESS.ORG
 2. Unpack the downloaded zip File and upload the ‘wp-caldav2ics’ directory to your ‘/wp-content/plugins/’ directory, using your favorite method (ftp, sftp, scp, etc…)
 3. proceed with Steps #3 to #6 from above
 
+FROM GITHUB.COM
+
+1. git clone https://github.com/wernerjoss/wp-caldav2ics
+2. Upload Directory wp-caldav2ics to your WP Installion, ../wp-content/plugins
+3. proceed with Steps #3 to #6 from above
+Alternatively, you can also download the zip File from the GitHub Page, but note: this one will be named wp-caldav2ics-master.zip
+and will unpack to a folder named wp-calda2ics-master.
+This will have to be renamed to wp-caldav2ics before uploading !
+
 == Frequently Asked Questions ==
 
 = How can I see if the .ics File has been created ?
