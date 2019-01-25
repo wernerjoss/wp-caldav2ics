@@ -21,22 +21,22 @@ Just read the whole story at https://hoernerfranzracing.de/werner/?page_id=1958 
 FROM YOUR WORDPRESS DASHBOARD
 
 1. Visit ‘Plugins > Add New’
-2. Search for ‘WP-CalDav2ICS’, select 'Install'
-3. Activate WP-CalDav2ICS from your Plugins page.
+2. Search for ‘wp-caldav2ics’, select 'Install'
+3. Activate wp-caldav2ics from your Plugins page.
 4. Go to the Plugin Admin Page and provide the required Settings, then press 'Save Changes'
 5. Check correct working ( = ICS File created from your CalDav Calendar at the desired Intervals)
 6. If anything goes wrong, re-check your Settings, enable Logging, check WP Cron Events to have bl_cron_hook running as planned, use https://wordpress.org/plugins/wp-crontrol (or similar Plugin) for that
 
 FROM WORDPRESS.ORG
 
-1. Download WP-CalDav2ICS.
+1. Download wp-caldav2ics.zip .
 2. Unpack the downloaded zip File and upload the ‘wp-caldav2ics’ directory to your ‘/wp-content/plugins/’ directory, using your favorite method (ftp, sftp, scp, etc…)
 3. proceed with Steps #3 to #6 from above
 
 FROM GITHUB.COM
 
 1. git clone https://github.com/wernerjoss/wp-caldav2ics
-2. Upload Directory wp-caldav2ics to your WP Installion, ../wp-content/plugins
+2. Upload Directory wp-caldav2ics to your WP Installion,  usually 'wp-content/plugins'
 3. proceed with Steps #3 to #6 from above
 Alternatively, you can also download the zip File from the GitHub Page, but note: this one will be named wp-caldav2ics-master.zip
 and will unpack to a folder named wp-calda2ics-master.
