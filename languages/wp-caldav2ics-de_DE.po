@@ -146,7 +146,7 @@ msgid ""
 "calendars. Logfile (if Logging enabeled) will be cron.log in PluginDir."
 msgstr ""
 "Die ICS Datei muss ohne Pfad angegeben werden, sie wird gespeichert unter "
-"uploadscalendars. Die Logdatei (falls Logging eingeschaltet) ist cron.log im "
+"uploads/calendars. Die Logdatei (falls Logging eingeschaltet) ist cron.log im "
 "PluginDir."
 
 #: wp-caldav2ics.php:29
