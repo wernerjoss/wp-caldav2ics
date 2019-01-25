@@ -259,22 +259,18 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			if ($LogEnabeled) { 
 				fwrite($loghandle, "Tag:".$Tag."\n");
 			}
+			$xmlStr = $body_r;
 			if (stripos($body, '<calendar-data'))  {  // mailbox.org , md2002 22.01.19
 				if (stripos($calendar_url, 'dav.mailbox.org'))	{
-					$xmlStr = $body_r;
 					$xmlStr = str_replace('<![CDATA[', '', $xmlStr);	// remove CDATA cruft that prevents $xml->xpath from working
 					$xmlStr = str_replace(']]>', '', $xmlStr);
 					$xmlStr = str_replace('xmlns=', 'ns=', $xmlStr); // see comments on http://php.net/manual/de/simplexmlelement.xpath.php
-					//  print($xmlStr);
-					if ($LogEnabeled)   fwrite($loghandle, $xmlStr);
-					$xml = new SimpleXMLElement($xmlStr);   // (re-)create proper xml Object
-					$data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
 				}
-			}   else	 {  // all others (so far) can be handeled via $body
-				$xml = simplexml_load_string($body);	// use $body here, NOT print_r($body) !!
-				$data = $xml->xpath($Tag);   // use Tag found in response, see above 13.01.19
 			}
-			if (false == $data)	{	// issue Warning if $body cannot be parsed
+			if ($LogEnabeled)   fwrite($loghandle, $xmlStr);
+			$xml = new SimpleXMLElement($xmlStr);   // (re-)create proper xml Object
+            $data = $xml->xpath($Tag);   // use Tag found in response to exctract data, see above 13.01.19
+			if (false == $data)	{	// issue Error Message if $xml->xpath cannot be evaluated
 				$handle = fopen($ICalFile, 'w') or wp_die('Cannot open file:  '.$ICalFile);
 				fwrite($handle, "ERROR: Your Server's response is invalid and cannot be parsed - please enable Logging and check the Logfile !\n");
 				fclose($handle);

@@ -1,10 +1,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP-Caldav2ICS\n"
-"POT-Creation-Date: 2018-10-21 09:49+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-01-25 14:04+0100\n"
 "PO-Revision-Date: 2018-11-16 14:22+0100\n"
 "Last-Translator: \n"
 "Language-Team: Werner Joss\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,101 +14,108 @@ msgstr ""
 "X-Poedit-Basepath: ../\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: __;_e\n"
-"Language: de\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: ../Caldav2ics_OptionsManager.php:266 ../Caldav2ics_Plugin.php:329
+#: Caldav2ics_OptionsManager.php:266 Caldav2ics_Plugin.php:376
 msgid "You do not have sufficient permissions to access this page."
 msgstr "Du hast nicht genügend Rechte um diese Seite zu öffnen."
 
-#: ../Caldav2ics_OptionsManager.php:286 ../Caldav2ics_Plugin.php:360
+#: Caldav2ics_OptionsManager.php:286 Caldav2ics_Plugin.php:407
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: ../Caldav2ics_OptionsManager.php:318 ../Caldav2ics_Plugin.php:414
+#: Caldav2ics_OptionsManager.php:318 Caldav2ics_Plugin.php:461
 msgid "Save Changes"
 msgstr "Änderungen speichern"
 
-#: ../Caldav2ics_OptionsManager.php:376
+#: Caldav2ics_OptionsManager.php:376
 msgid "true"
 msgstr ""
 
-#: ../Caldav2ics_OptionsManager.php:378
+#: Caldav2ics_OptionsManager.php:378
 msgid "false"
 msgstr ""
 
-#: ../Caldav2ics_OptionsManager.php:381
+#: Caldav2ics_OptionsManager.php:381
 msgid "Administrator"
 msgstr ""
 
-#: ../Caldav2ics_OptionsManager.php:383
+#: Caldav2ics_OptionsManager.php:383
 msgid "Editor"
 msgstr "Redakteur"
 
-#: ../Caldav2ics_OptionsManager.php:385
+#: Caldav2ics_OptionsManager.php:385
 msgid "Author"
 msgstr "Autor"
 
-#: ../Caldav2ics_OptionsManager.php:387
+#: Caldav2ics_OptionsManager.php:387
 msgid "Contributor"
 msgstr "Mitarbeiter"
 
-#: ../Caldav2ics_OptionsManager.php:389
+#: Caldav2ics_OptionsManager.php:389
 msgid "Subscriber"
 msgstr "Abonnent"
 
-#: ../Caldav2ics_OptionsManager.php:391
+#: Caldav2ics_OptionsManager.php:391
 msgid "Anyone"
 msgstr "Jeder"
 
-#: ../Caldav2ics_Plugin.php:32
+#: Caldav2ics_Plugin.php:38
 msgid "CalDav Calendar URL*"
 msgstr "CalDav Kalender URL*"
 
-#: ../Caldav2ics_Plugin.php:33
+#: Caldav2ics_Plugin.php:39
 msgid "CalDav Username*"
 msgstr ""
 
-#: ../Caldav2ics_Plugin.php:34
+#: Caldav2ics_Plugin.php:40
 msgid "CalDav Password*"
 msgstr "CalDav Passwort*"
 
-#: ../Caldav2ics_Plugin.php:35
+#: Caldav2ics_Plugin.php:41
 msgid "Cron Interval"
 msgstr "Cron Intervall"
 
-#: ../Caldav2ics_Plugin.php:37
+#: Caldav2ics_Plugin.php:43
 msgid "enable Logging"
 msgstr "Logging einschalten"
 
-#: ../Caldav2ics_Plugin.php:38
+#: Caldav2ics_Plugin.php:44
 msgid "ICS File"
 msgstr "ICS Datei"
 
-#: ../Caldav2ics_Plugin.php:114
+#: Caldav2ics_Plugin.php:120
 msgid "Caldav2ICS Plugin activated - "
 msgstr "Caldav2ICS Plugin aktiviert - "
 
-#: ../Caldav2ics_Plugin.php:116
+#: Caldav2ics_Plugin.php:122
 msgid "Be sure to set correct Values in Plugin Admin Page !"
 msgstr "Bitte korrekte Einstellungen auf der Plugin Admin-Seite vornehmen !"
 
-#: ../Caldav2ics_Plugin.php:346
+#: Caldav2ics_Plugin.php:278
+msgid ""
+"ERROR: Your Server's response is invalid and cannot be parsed - please "
+"enable Logging and check the Logfile !"
+msgstr ""
+"Fehler: Der Server lieferte eine ungültige Antwort, die nicht interpretiert "
+"werden kann - bitte Logging einschalten und die Logdatei prüfen !"
+
+#: Caldav2ics_Plugin.php:393
 msgid "Settings Updated - please check Your generated ICS File at: "
 msgstr "Einstellungen gespeichert - bitte die erzeugte .ics Datei hier prüfen:"
 
-#: ../Caldav2ics_Plugin.php:348
+#: Caldav2ics_Plugin.php:395
 msgid ""
 "(In case anything does not work as expected, please enable Logging and check "
 "the "
 msgstr ""
 "(sofern iregendetwas nicht so funktioniert wei erwartert, bitte die Logdatei "
 
-#: ../Caldav2ics_Plugin.php:396
+#: Caldav2ics_Plugin.php:443
 msgid "Error - You have currently one or more invalid mandatory Options set:"
 msgstr "Fehler: momentan sind eine oder mehrere falsche Optionen gesetzt:"
 
-#: ../Caldav2ics_Plugin.php:401
+#: Caldav2ics_Plugin.php:448
 msgid ""
 "Note: Settings that end with * are mandatory, all others are optional, which "
 "will be replaced by Defaults, if not specified."
@@ -115,23 +124,23 @@ msgstr ""
 "sind optional, diese werden durch Standardwerte ersetzt, wenn nicht "
 "angegeben."
 
-#: ../Caldav2ics_Plugin.php:402
+#: Caldav2ics_Plugin.php:449
 msgid "Defaults are:"
 msgstr "Standardwerte sind:"
 
-#: ../Caldav2ics_Plugin.php:404
+#: Caldav2ics_Plugin.php:451
 msgid "Cron Interval: daily"
 msgstr "Cron Intervall: daily"
 
-#: ../Caldav2ics_Plugin.php:406
+#: Caldav2ics_Plugin.php:453
 msgid "enable Logging: false"
 msgstr "Logging einschalten: false"
 
-#: ../Caldav2ics_Plugin.php:408
+#: Caldav2ics_Plugin.php:455
 msgid "ICS File: calendar.ics"
 msgstr "ICS Datei: calendar.ics"
 
-#: ../Caldav2ics_Plugin.php:410
+#: Caldav2ics_Plugin.php:457
 msgid ""
 "ICS File must be specified without PATH, it will be stored in uploads/"
 "calendars. Logfile (if Logging enabeled) will be cron.log in PluginDir."
@@ -140,16 +149,16 @@ msgstr ""
 "uploadscalendars. Die Logdatei (falls Logging eingeschaltet) ist cron.log im "
 "PluginDir."
 
-#: ../wp-caldav2ics.php:29
+#: wp-caldav2ics.php:29
 msgid ""
 "Error: plugin \"WP-CalDav2ICS\" requires a newer version of PHP to be "
 "running."
 msgstr "Fehler: Das Plugin \"CalDav2ICS\" erfordert eine neuere PHP Version."
 
-#: ../wp-caldav2ics.php:30
+#: wp-caldav2ics.php:30
 msgid "Minimal version of PHP required: "
 msgstr "Minimal notwenige PHP Version: "
 
-#: ../wp-caldav2ics.php:31
+#: wp-caldav2ics.php:31
 msgid "Your server's PHP version: "
 msgstr "PHP Version des Servers: "
