@@ -5,7 +5,7 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 4.4
 Tested up to: 5.0.3
-Stable tag: 1.0.3
+Stable tag: 1.0.5
 Requires PHP: 5.6
 
 Automatically create ICS File from CalDav Calendar
@@ -75,6 +75,15 @@ or
 2. WP Cron Page
 
 == Changelog ==
+= 1.0.5 =
+Fix missing VTIMEZONE data in Calendar Properties
+
+= 1.0.4 =
+Updated readme.txt
+Code cleanup
+Updated Translations
+Tagged Stable Version
+
 = 1.0.3 =
 Fix another alternative Server Response Issue (mailbox.org/Open Xchange)
 Update FAQ
