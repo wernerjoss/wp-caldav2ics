@@ -291,6 +291,21 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			fwrite($handle, 'BEGIN:VCALENDAR'."\r\n");
 			fwrite($handle, 'VERSION:2.0'."\r\n");
 			fwrite($handle, 'PRODID:-//hoernerfranzracing/wp-caldav2ics plugin'."\r\n");
+			// find and write TIMEZONE data, new feature, 27.12.19
+			$skip = true;
+			$lines = explode("\n", $data_r);
+			foreach ($lines as $line)   {
+                if ($this->startswith($line,'BEGIN:VTIMEZONE'))	{
+					$skip = false;
+                }
+                if ( !$skip )	{
+					fwrite($handle, $line."\r\n"); // write everything between 'BEGIN:VTIMEZONE' and 'END:VTIMEZONE'
+					// echo $line."\n";
+                }
+                if ($this->startswith($line,'END:VTIMEZONE'))	{
+					$skip = true;
+                }
+			}
 			// exctract events
 			// parse $data as $vcalendars, do NOT write VCALENDAR header for each one, just the event data /TZ data etc...
 			foreach ($data as $vcalendars) {
