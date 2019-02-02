@@ -1,6 +1,7 @@
 <?php
 /*
-DONE: better approach to retrieve CaldaV Server response in bl_cron_exec, see https://deliciousbrains.com/php-curl-how-wordpress-makes-http-requests/
+Dies ist die Entwicklungsversion hin zu einer 'Mehrere Kalender' Version, siehe ToDo.txt
+Achtung: diese darf vorest nicht in ein öffentliches Repo kommen !
 */
 
 include_once('Caldav2ics_LifeCycle.php');
@@ -38,13 +39,13 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			'CalendarURL' => array(__('CalDav Calendar URL*', 'wp-caldav2ics')),
 			'Username' => array(__('CalDav Username*', 'wp-caldav2ics')),
 			'Password' => array(__('CalDav Password*', 'wp-caldav2ics')),
+			'CalendarFile' => array(__('ICS File', 'wp-caldav2ics')),
 			'CronInterval' => array(__('Cron Interval', 'wp-caldav2ics'),
 										'daily', 'twicedaily', 'hourly'),
 			'Logging' => array(__('enable Logging', 'wp-caldav2ics'),'true','false'),
-			'CalendarFile' => array(__('ICS File', 'wp-caldav2ics')),
 		);
 	}
-
+	
 	protected function getOptionValueI18nString($optionValue) {
 		$i18nValue = parent::getOptionValueI18nString($optionValue);
 		return $i18nValue;
@@ -66,7 +67,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 	}
 
 	protected function getMainPluginFileName() {
-		return 'caldav2ics.php';
+		return 'wp-caldav2ics.php';
 	}
 
 	/**
@@ -380,6 +381,20 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		}
 	}
 
+	// new approach, see ics-import from wp-ics-importer 02.02.19
+	function getCalendarOptions() {
+		$CalendarOptions = array(
+			'calendar_urls' => array(),
+			'calendar_users' => array(),
+			'calendar_passwords' => array(),
+			'calendar_files' => array(),
+		);
+		// wichtig !!!:
+		$CalendarOptions['calendar_urls' ] = get_option('calendar_urls' );
+		$CalendarOptions['calendar_users' ]= get_option('calendar_users' );
+		return $CalendarOptions;
+	}
+	
 	/**
 	* Creates HTML for the Administration page to set options for this plugin.
 	* this is an Override of the method from Caldav2ics_OptionsManager.php
@@ -390,13 +405,47 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		if (!current_user_can('manage_options')) {
 				wp_die(__('You do not have sufficient permissions to access this page.', 'wp-caldav2ics'));
 		}
-
-		$optionMetaData = $this->getOptionMetaData();
-
+		
+		// TODO: get/set $CalendarOptions (=array of $CalendarOptions)
+		
+		$CalendarOptions = $this->getCalendarOptions();
+		$GeneralOptionMetaData = $this->getOptionMetaData();
 		if (isset($_POST['updateSettings'])) {	// 'submit' Button pressed ? -> show Message
-			// Save Posted Options
-			if ($optionMetaData != null) {
-				foreach ($optionMetaData as $aOptionKey => $aOptionMeta) {
+			// Save Posted Options for Calendars
+			$cal_url_Array=array();
+			foreach($_POST['calendar_urls'] as $k=>$val) {
+				if(!empty($val)) {
+					$cal_url_Array[$k+1] = $val;
+				}
+			}
+			$CalendarOptions['calendar_urls'] = serialize($cal_url_Array);
+			update_option('calendar_urls', serialize($cal_url_Array));
+			$cal_user_Array=array();
+			foreach($_POST['calendar_users'] as $k=>$val) {
+				if(!empty($val)) {
+					$cal_user_Array[$k+1] = $val;
+				}
+			}
+			$CalendarOptions['calendar_users'] = serialize($cal_user_Array);
+			update_option('calendar_users', serialize($cal_user_Array));
+			/*
+			$cal_password_Array=array();
+			foreach($_POST['calendar_passwords'] as $k=>$val) {
+				if(!empty($val)) {
+					$cal_password_Array[$k+1] = $val;
+				}
+			}
+			$CalendarOptions['calendar_passwords'] = serialize($cal_password_Array);
+			$cal_files_Array=array();
+			foreach($_POST['calendar_files'] as $k=>$val) {
+				if(!empty($val)) {
+					$cal_files_Array[$k+1] = $val;
+				}
+			}
+			$CalendarOptions['calendar_files'] = serialize($cal_files_Array);
+			*/
+			if ($GeneralOptionMetaData != null) {
+				foreach ($GeneralOptionMetaData as $aOptionKey => $aOptionMeta) {
 					if (isset($_POST[$aOptionKey])) {
 						$this->updateOption($aOptionKey, $_POST[$aOptionKey]);
 					}
@@ -433,9 +482,41 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		table.plugin-options-table td > p {margin-top: 0; margin-bottom: 0;}
 		</style>
 		<table class="plugin-options-table"><tbody>
+		<tr valign="top"><th scope="row">Calendar URL(s)</th>
+		<td>
+			<?php
+			$cal_url_Array = unserialize($CalendarOptions['calendar_urls']);
+			if(is_array($cal_url_Array)) {
+			foreach($cal_url_Array as $key=>$val) { 
+				//	print("cal:".$val); ?>
+				<input type="text" name="calendar_urlsKey[]" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
+				<input type="text" name="calendar_urls[]" style="width: 80%; " value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
+			<?php } 
+			} ?>
+			<input type="text" id="addNewKey" name="calendar_urlsKey[]" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
+			<input type="text" id="addNewURL" name="calendar_urls[]" style="width: 80%; " value="" />
+			</td>
+		</tr>
+		<tr valign="top"><th scope="row">Calendar User(s)</th>
+		<td>
+			<?php
+			$cal_user_Array = unserialize($CalendarOptions['calendar_users']);
+			if(is_array($cal_user_Array)) {
+			foreach($cal_user_Array as $key=>$val) { //	print("user:".$val);?>
+				<input type="text" name="calendar_usersKey[]" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
+				<input type="text" name="calendar_users[]" style="width: 80%; " value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
+			<?php } 
+			} ?>
+			<input type="text" id="addNewKey" name="calendar_usersKey[]" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
+			<input type="text" id="addNewUser" name="calendar_users[]" style="width: 80%; " value="" />
+			</td>
+		</tr>
+		</tbody></table>
+		<br />
+		<table class="plugin-options-table"><tbody>
 		<?php
-		if ($optionMetaData != null) {
-			foreach ($optionMetaData as $aOptionKey => $aOptionMeta) {
+				if ($GeneralOptionMetaData != null) {
+			foreach ($GeneralOptionMetaData as $aOptionKey => $aOptionMeta) {
 				$displayText = is_array($aOptionMeta) ? $aOptionMeta[0] : $aOptionMeta;
 				?>
 				<tr valign="top">

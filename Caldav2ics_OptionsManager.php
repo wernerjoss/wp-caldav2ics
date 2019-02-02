@@ -42,17 +42,17 @@ class Caldav2ics_OptionsManager {
 	*       'CanDoOperationX' => array('Can do Operation X', 'Administrator', 'Editor', 'Author', 'Contributor', 'Subscriber'),
 	*       'Rating:', 'Excellent', 'Good', 'Fair', 'Poor')
 	*/
+	// general Options for all Calendars :
 	public function getOptionMetaData() {
 		return array();
 	}
-
 	/**
 	* @return array of string name of options
 	*/
 	public function getOptionNames() {
 		return array_keys($this->getOptionMetaData());
 	}
-
+	
 	/**
 	* Override this method to initialize options to default values and save to the database with add_option
 	* @return void
