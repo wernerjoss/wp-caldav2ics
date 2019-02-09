@@ -5,7 +5,7 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 4.4
 Tested up to: 5.0.3
-Stable tag: 1.0.5
+Stable tag: 1.1.0
 Requires PHP: 5.6
 
 Automatically create ICS File from CalDav Calendar
@@ -41,6 +41,9 @@ FROM GITHUB.COM
 Alternatively, you can also download the zip File from the GitHub Page, but note: this one will be named wp-caldav2ics-master.zip
 and will unpack to a folder named wp-calda2ics-master.
 This will have to be renamed to wp-caldav2ics before uploading !
+In case your Installation is from the WP Directory and you want to try the Development Version from 
+GitHub zip Download, you can also just upload all Files from the unpacked Folder wp-calda2ics-master 
+to wp-content/plugins/wp-calda2ics
 
 == Frequently Asked Questions ==
 
@@ -73,8 +76,12 @@ or
 
 1. Plugin Admin Page
 2. WP Cron Page
+3. New Multi-Calendar Feature (from Version 1.1.0)
 
 == Changelog ==
+= 1.1.0 =
+Added Multi-Calendar Function, that is, you can now convert multiple Calendars at once (see Screenshot #3)
+
 = 1.0.5 =
 Fixed missing VTIMEZONE data in Calendar Properties
 Completed german Translation for WP Directory
