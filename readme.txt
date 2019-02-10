@@ -12,10 +12,11 @@ Automatically create ICS File from CalDav Calendar
 
 == Description ==
 
-Ever thought about to use your (remote) CalDav Calendar as an automatic data source for your favourite WP Calendar Plugin ?
+Ever thought about to use your (remote) CalDav Calendar(s) as an automatic data source for your favourite WP Calendar Plugin ?
 Searched for a Plugin that would provide this functionality in the WP Plugins Directory and found nothing useful ?
 Well, in case of 'Yes' to both questions, this is for You :) .
 Just read the whole story at https://hoernerfranzracing.de/werner/?page_id=1958 to check out if this will fit your needs...
+And yes, Calendar(s) is correct from Version 1.1.0 - you are no longer limited to just ONE Calendar Source !
 
 == Installation ==
 FROM YOUR WORDPRESS DASHBOARD
@@ -81,6 +82,7 @@ or
 == Changelog ==
 = 1.1.0 =
 Added Multi-Calendar Function, that is, you can now convert multiple Calendars at once (see Screenshot #3)
+moved Backend styles to separate File (css/style.css)
 
 = 1.0.5 =
 Fixed missing VTIMEZONE data in Calendar Properties
