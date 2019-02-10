@@ -2,6 +2,7 @@
 /*
 Dies ist die Entwicklungsversion hin zu einer 'Mehrere Kalender' Version, siehe ToDo.txt
 Achtung: diese darf vorest nicht in ein öffentliches Repo kommen !
+10.02.19: funktioniert auf hoernerfranzracing.de :)
 */
 
 include_once('Caldav2ics_LifeCycle.php');
@@ -9,7 +10,6 @@ include_once('Caldav2ics_LifeCycle.php');
 class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 	
 	// not yet really DONE: check all Calendar Entrys for valid data
-	//protected function CheckMandatoryOptions() {
 	public function CheckMandatoryOptions() {
 		$CalendarOptions = $this->getCalendarOptions();
 		$calNum = 1;
@@ -25,7 +25,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		*/
 		// 10.02.19: das funktioniert alles nicht, weil im Fall einer leeren Eingabe einfach $CalendarOptions... leer ist
 		// und damit in der foreach Schleife garnicht auftaucht
-		// TODO: anderer Test
+		// TODO (?): anderer Test
 		$calNum = 1;
 		foreach(($calUsers = unserialize($CalendarOptions['caldav2ics_calendar_users']))  as $calUser) {
 			$Username = $calUser;	//	($calUser);
@@ -57,17 +57,6 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			'Logging' => array(__('enable Logging', 'wp-caldav2ics'),'true','false'),
 		);
 	}
-	
-	/*
-	public function getDeprecatedOptionMetaData() {
-		return array(
-			'CalendarURL' => array(__('CalDav Calendar URL*', 'wp-caldav2ics')),
-			'Username' => array(__('CalDav Username*', 'wp-caldav2ics')),
-			'Password' => array(__('CalDav Password*', 'wp-caldav2ics')),
-			'CalendarFile' => array(__('ICS File', 'wp-caldav2ics')),
-		);
-	}
-	*/
 	
 	protected function getOptionValueI18nString($optionValue) {
 		$i18nValue = parent::getOptionValueI18nString($optionValue);
@@ -227,14 +216,9 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			echo("Invalid CalendarURL(s) and/or Credentials, aborting!<br>");
 			if ($LogEnabeled)	{
 				fwrite($loghandle, "Invalid CalendarURL(s) and/or Credentials, aborting!\n");
-				/*
-				fwrite($loghandle, "Calendar URL: ".$this->Mandatory_Options['CalendarURL']." must be specified and validated\n");
-				fwrite($loghandle, "Username: ".$this->Mandatory_Options['Username']." must be specified\n");
-				fwrite($loghandle, "Password: ".$this->Mandatory_Options['Password']." must be specified\n");
-				*/
 				fclose($loghandle);
 			}
-			return;	// do not proceed if invalid Mandatory_Options found
+			return;	// do not proceed if invalid CalendarURLs found
 		}
 		// DONE: Loop all Calendars 
 		$CalendarOptions = $this->getCalendarOptions();
@@ -448,12 +432,18 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			wp_unschedule_event( $timestamp, 'bl_cron_hook');	// unschedule currently scheduled event
 			wp_schedule_event( $timestamp, $cron_interval, 'bl_cron_hook' );	// do NOT use time() here !!!	// schedule new event with (possibly) different cron_interval
 		}
-		
+		// enqueue scripts and styles for admin pages	10.02.19
+		add_action('admin_enqueue_scripts', array(&$this, 'enqueueAdminPageStylesAndScripts'));
+
 		// display activation message
 		/* Add admin notice */
 		add_action( 'admin_notices', array(&$this, 'activation_notice' ));	// wichtig: array(&this ...) !
 	}
-
+	
+	public function enqueueAdminPageStylesAndScripts() {
+		wp_enqueue_style('style', plugins_url('/css/style.css', __FILE__));
+	}
+	
 	private function startswith ($string, $stringToSearchFor) {
 		if (substr(trim($string),0,strlen($stringToSearchFor)) == $stringToSearchFor) {
 				// the (trimmed) string starts with the string you're looking for
@@ -574,23 +564,13 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		$settingsGroup = get_class($this) . '-settings-group';
 		?>
 		<div class="wrap">
-		<!-- removed Table System Settings as this has nothing to do with calda2ics 19.10.18 -->
+		<!-- removed Table System Settings as this has nothing to do with wp-caldav2ics 19.10.18 -->
 
 		<h2><?php echo $this->getPluginDisplayName(); echo ' '; _e('Settings', 'wp-caldav2ics'); ?></h2>
 
 		<form method="post" action="">
 		<?php settings_fields($settingsGroup); ?>
-		<!-- TODO: put styles in plugin css file	-->
-		<style type="text/css">
-		table.plugin-options-table {width: 100%; padding: 0;}
-		table.plugin-options-table tr:nth-child(even) {background: #f9f9f9}
-		table.plugin-options-table tr:nth-child(odd) {background: #FFF}
-		table.plugin-options-table tr:first-child {width: 35%;}
-		table.plugin-options-table td {vertical-align: middle;}
-		table.plugin-options-table td+td {width: auto}
-		table.plugin-options-table td > p {margin-top: 0; margin-bottom: 0;}
-		table.plugin-options-table th {width:23%;}
-		</style>
+		<!-- DONE: put styles in plugin css file	(see addActionsAndFilters() )-->
 		<table class="plugin-options-table"><tbody>
 		<tr valign="top"><th scope="row">CalDav Calendar URL(s) *</th>
 		<td>
@@ -599,12 +579,12 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			if(is_array($cal_url_Array)) {
 			foreach($cal_url_Array as $key=>$val) { 
 				//	print("cal:".$val); ?>
-				<input type="text" name="caldav2ics_calendar_urlsKey[]" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
-				<input type="text" name="caldav2ics_calendar_urls[]" style="width: 93%; " value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
+				<input type="text" name="caldav2ics_calendar_urlsKey" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
+				<input type="text" name="caldav2ics_calendar_urls" class="calendars_options" value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
 			<?php } 
 			} ?>
-			<input type="text" id="addNewKey" name="caldav2ics_calendar_urlsKey[]" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
-			<input type="text" id="addNewURL" name="caldav2ics_calendar_urls[]" style="width: 93%; " value="" />
+			<input type="text" id="addNewKey" name="caldav2ics_calendar_urlsKey" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
+			<input type="text" id="addNewURL" name="caldav2ics_calendar_urls" class="calendars_options" value="" />
 			</td>
 		</tr>
 		<tr valign="top"><th scope="row">CalDav Calendar Username(s) *</th>
@@ -613,12 +593,12 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			$cal_user_Array = unserialize($CalendarOptions['caldav2ics_calendar_users']);
 			if(is_array($cal_user_Array)) {
 			foreach($cal_user_Array as $key=>$val) { //	print("user:".$val);?>
-				<input type="text" name="caldav2ics_calendar_usersKey[]" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
-				<input type="text" name="caldav2ics_calendar_users[]" style="width: 93%; " value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
+				<input type="text" name="caldav2ics_calendar_usersKey" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
+				<input type="text" name="caldav2ics_calendar_users" class="calendars_options" value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
 			<?php } 
 			} ?>
-			<input type="text" id="addNewKey" name="caldav2ics_calendar_usersKey[]" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
-			<input type="text" id="addNewUser" name="caldav2ics_calendar_users[]" style="width: 93%; " value="" />
+			<input type="text" id="addNewKey" name="caldav2ics_calendar_usersKey" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
+			<input type="text" id="addNewUser" name="caldav2ics_calendar_users" class="calendars_options" value="" />
 			</td>
 		</tr>
 		<tr valign="top"><th scope="row">CalDav Calendar Password(s) *</th>
@@ -627,12 +607,12 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			$cal_password_Array = unserialize($CalendarOptions['caldav2ics_calendar_passwords']);
 			if(is_array($cal_password_Array)) {
 			foreach($cal_password_Array as $key=>$val) { ?>
-				<input type="text" name="caldav2ics_calendar_passwordKey[]" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
-				<input type="text" name="caldav2ics_calendar_passwords[]" style="width: 93%; " value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
+				<input type="text" name="caldav2ics_calendar_passwordKey" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
+				<input type="text" name="caldav2ics_calendar_passwords" class="calendars_options" value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
 			<?php } 
 			} ?>
-			<input type="text" id="addNewKey" name="caldav2ics_calendar_passwordKey[]" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
-			<input type="text" id="addNewPassword" name="caldav2ics_calendar_passwords[]" style="width: 93%; " value="" />
+			<input type="text" id="addNewKey" name="caldav2ics_calendar_passwordKey" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
+			<input type="text" id="addNewPassword" name="caldav2ics_calendar_passwords" class="calendars_options" value="" />
 			</td>
 		</tr>
 		<tr valign="top"><th scope="row">ICS Calendar File(s)</th>
@@ -641,12 +621,12 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			$cal_files_Array = unserialize($CalendarOptions['caldav2ics_calendar_files']);
 			if(is_array($cal_files_Array)) {
 			foreach($cal_files_Array as $key=>$val) { ?>
-				<input type="text" name="caldav2ics_calendar_filesKey[]" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
-				<input type="text" name="caldav2ics_calendar_files[]" style="width: 93%; " value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
+				<input type="text" name="caldav2ics_calendar_filesKey" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
+				<input type="text" name="caldav2ics_calendar_files" class="calendars_options" value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
 			<?php } 
 			} ?>
-			<input type="text" id="addNewKey" name="caldav2ics_calendar_filesKey[]" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
-			<input type="text" id="addNewFile" name="caldav2ics_calendar_files[]" style="width: 93%; " value="" />
+			<input type="text" id="addNewKey" name="caldav2ics_calendar_filesKey" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
+			<input type="text" id="addNewFile" name="caldav2ics_calendar_files" class="calendars_options" value="" />
 			</td>
 		</tr>
 		</tbody></table>

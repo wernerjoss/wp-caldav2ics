@@ -1,7 +1,9 @@
 *.kdev4
 /.kdev4
+css/.sass-cache/*
 
 *.log
+*.map
 wp-config.php
 wp-content/advanced-cache.php
 wp-content/backup-db/

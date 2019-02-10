@@ -1,0 +1,32 @@
+table.plugin-options-table {
+	width: 100%;
+	padding: 0;
+	tr {
+		&:nth-child(even) {
+			background: #f9f9f9;
+		}
+		&:nth-child(odd) {
+			background: #FFF;
+		}
+		&:first-child {
+			width: 35%;
+		}
+	}
+	td {
+		vertical-align: middle;
+		+ td {
+			width: auto;
+		}
+		> p {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+	}
+	th {
+		width: 23%;
+	}
+}
+
+input.calendars_options {
+	width: 93%;
+}

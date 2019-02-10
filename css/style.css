@@ -1,0 +1,23 @@
+table.plugin-options-table {
+  width: 100%;
+  padding: 0; }
+  table.plugin-options-table tr:nth-child(even) {
+    background: #f9f9f9; }
+  table.plugin-options-table tr:nth-child(odd) {
+    background: #FFF; }
+  table.plugin-options-table tr:first-child {
+    width: 35%; }
+  table.plugin-options-table td {
+    vertical-align: middle; }
+    table.plugin-options-table td + td {
+      width: auto; }
+    table.plugin-options-table td > p {
+      margin-top: 0;
+      margin-bottom: 0; }
+  table.plugin-options-table th {
+    width: 23%; }
+
+input.calendars_options {
+  width: 93%; }
+
+/*# sourceMappingURL=style.css.map */
