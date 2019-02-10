@@ -1,25 +1,26 @@
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: WP-Caldav2ICS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-25 14:04+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2019-02-10 14:46+0100\n"
+"PO-Revision-Date: 2019-02-10 14:46+0100\n"
+"Last-Translator: Werner Joss\n"
+"Language-Team: Werner Joss\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Caldav2ics_OptionsManager.php:266 Caldav2ics_Plugin.php:376
+#: Caldav2ics_OptionsManager.php:266 Caldav2ics_Plugin.php:481
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: Caldav2ics_OptionsManager.php:286 Caldav2ics_Plugin.php:407
+#: Caldav2ics_OptionsManager.php:286 Caldav2ics_Plugin.php:569
 msgid "Settings"
 msgstr ""
 
-#: Caldav2ics_OptionsManager.php:318 Caldav2ics_Plugin.php:461
+#: Caldav2ics_OptionsManager.php:318 Caldav2ics_Plugin.php:672
 msgid "Save Changes"
 msgstr ""
 
@@ -55,83 +56,68 @@ msgstr ""
 msgid "Anyone"
 msgstr ""
 
-#: Caldav2ics_Plugin.php:38
-msgid "CalDav Calendar URL*"
-msgstr ""
-
-#: Caldav2ics_Plugin.php:39
-msgid "CalDav Username*"
-msgstr ""
-
-#: Caldav2ics_Plugin.php:40
-msgid "CalDav Password*"
-msgstr ""
-
-#: Caldav2ics_Plugin.php:41
+#: Caldav2ics_Plugin.php:55
 msgid "Cron Interval"
 msgstr ""
 
-#: Caldav2ics_Plugin.php:43
+#: Caldav2ics_Plugin.php:57
 msgid "enable Logging"
 msgstr ""
 
-#: Caldav2ics_Plugin.php:44
-msgid "ICS File"
-msgstr ""
-
-#: Caldav2ics_Plugin.php:120
+#: Caldav2ics_Plugin.php:160
 msgid "Caldav2ICS Plugin activated - "
 msgstr ""
 
-#: Caldav2ics_Plugin.php:122
+#: Caldav2ics_Plugin.php:162
 msgid "Be sure to set correct Values in Plugin Admin Page !"
 msgstr ""
 
-#: Caldav2ics_Plugin.php:278
+#: Caldav2ics_Plugin.php:214 Caldav2ics_Plugin.php:237
+#: Caldav2ics_Plugin.php:517 Caldav2ics_Plugin.php:654
+msgid "Error - You have currently one or more invalid mandatory Options set:"
+msgstr ""
+
+#: Caldav2ics_Plugin.php:344
 msgid ""
 "ERROR: Your Server's response is invalid and cannot be parsed - please "
 "enable Logging and check the Logfile !"
 msgstr ""
 
-#: Caldav2ics_Plugin.php:393
-msgid "Settings Updated - please check Your generated ICS File at: "
+#: Caldav2ics_Plugin.php:547
+msgid "Settings Updated - please check Your generated ICS File(s) at: "
 msgstr ""
 
-#: Caldav2ics_Plugin.php:395
+#: Caldav2ics_Plugin.php:557
 msgid ""
 "(In case anything does not work as expected, please enable Logging and check "
 "the "
 msgstr ""
 
-#: Caldav2ics_Plugin.php:443
-msgid "Error - You have currently one or more invalid mandatory Options set:"
-msgstr ""
-
-#: Caldav2ics_Plugin.php:448
+#: Caldav2ics_Plugin.php:659
 msgid ""
 "Note: Settings that end with * are mandatory, all others are optional, which "
 "will be replaced by Defaults, if not specified."
 msgstr ""
 
-#: Caldav2ics_Plugin.php:449
+#: Caldav2ics_Plugin.php:660
 msgid "Defaults are:"
 msgstr ""
 
-#: Caldav2ics_Plugin.php:451
+#: Caldav2ics_Plugin.php:662
 msgid "Cron Interval: daily"
 msgstr ""
 
-#: Caldav2ics_Plugin.php:453
+#: Caldav2ics_Plugin.php:664
 msgid "enable Logging: false"
 msgstr ""
 
-#: Caldav2ics_Plugin.php:455
-msgid "ICS File: calendar.ics"
+#: Caldav2ics_Plugin.php:666
+msgid "ICS File(s): calendar0.ics, calendar1.ics..."
 msgstr ""
 
-#: Caldav2ics_Plugin.php:457
+#: Caldav2ics_Plugin.php:668
 msgid ""
-"ICS File must be specified without PATH, it will be stored in uploads/"
+"ICS File(s) must be specified without PATH, will be stored in uploads/"
 "calendars. Logfile (if Logging enabeled) will be cron.log in PluginDir."
 msgstr ""
 
