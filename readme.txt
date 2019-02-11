@@ -43,8 +43,7 @@ Alternatively, you can also download the zip File from the GitHub Page, but note
 and will unpack to a folder named wp-calda2ics-master.
 This will have to be renamed to wp-caldav2ics before uploading !
 In case your Installation is from the WP Directory and you want to try the Development Version from 
-GitHub zip Download, you can also just upload all Files from the unpacked Folder wp-calda2ics-master 
-to wp-content/plugins/wp-calda2ics
+GitHub zip Download, you can also just upload all Files (including those in Subdirectories!) from the unpacked Folder wp-calda2ics-master to wp-content/plugins/wp-caldav2ics
 
 == Frequently Asked Questions ==
 
