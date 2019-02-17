@@ -115,8 +115,11 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 	 */
 	public function upgrade() {
 		// DONE: do the actual Upgrade from the single Calendar Version
+		$Upgraded = false;
 		$DeprecatedCalUrl = $this->getOption('CalendarURL');
 		if (strlen(trim($DeprecatedCalUrl)) > 0)	{
+			$Upgraded = true;	// TODO: Notice to Admin Page 17.02.19
+			set_transient( "caldav2ics_upgrade", "upgraded", 3 );
 			$cal_url_Array = array($DeprecatedCalUrl);
 			update_option('caldav2ics_calendar_urls', serialize($cal_url_Array));
 			$this->deleteOption('CalendarURL');
@@ -149,7 +152,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 	}
 
 	/**
-	* Admin Notice on Activation.
+	* Admin Notice on Activation / Upgrade
 	*/
 	public function activation_notice(){
 		/* Check transient */
@@ -159,12 +162,25 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				<p>
 				<?php _e('Caldav2ICS Plugin activated - '); ?>
 				<strong>
-				<?php _e('Be sure to set correct Values in Plugin Admin Page !'); 
+				<?php _e("Be sure to set correct Values in Plugin Admin Page then press 'Save Changes'  !"); 
 				?>
 				</strong>.</p>
 			</div>
 			<?php
 			delete_transient( 'caldav2ics' );
+		}
+		if ( "upgraded" == get_transient( "caldav2ics_upgrade" )) {
+			?>
+			<div class="notice notice-info is-dismissible">
+				<p>
+				<?php _e('Caldav2ICS Plugin upgraded - '); ?>
+				<strong>
+				<?php _e("Be sure to check correct Values have been migrated in Plugin Admin Page then press 'Save Changes'  !"); 
+				?>
+				</strong>.</p>
+			</div>
+			<?php
+			delete_transient( 'caldav2ics_upgrade' );
 		}
 	}
 
