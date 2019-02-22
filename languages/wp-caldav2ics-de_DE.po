@@ -1,4 +1,4 @@
-msgid ""
+msgid  ""
 msgstr ""
 "Project-Id-Version: WP-Caldav2ICS\n"
 "Report-Msgid-Bugs-To: \n"
@@ -82,11 +82,9 @@ msgid "Error - You have currently one or more invalid mandatory Options set:"
 msgstr "Fehler: momentan sind eine oder mehrere falsche Optionen gesetzt:"
 
 #: Caldav2ics_Plugin.php:344
-msgid ""
-"ERROR: Your Server's response is invalid and cannot be parsed - please "
+msgid "ERROR: Your Server's response is invalid and cannot be parsed - please "
 "enable Logging and check the Logfile !"
-msgstr ""
-"Fehler: Der Server lieferte eine ungültige Antwort, die nicht interpretiert "
+msgstr "Fehler: Der Server lieferte eine ungültige Antwort, die nicht interpretiert" 
 "werden kann - bitte Logging einschalten und die Logdatei prüfen !"
 
 #: Caldav2ics_Plugin.php:547
@@ -95,20 +93,12 @@ msgstr ""
 "Einstellungen gespeichert - bitte die erzeugte(n) ICS Datei(en) hier prüfen:"
 
 #: Caldav2ics_Plugin.php:557
-msgid ""
-"(In case anything does not work as expected, please enable Logging and check "
-"the "
-msgstr ""
-"(sofern iregendetwas nicht so funktioniert wei erwartert, bitte die Logdatei "
+msgid "(In case anything does not work as expected, please enable Logging and check the "
+msgstr "(sofern iregendetwas nicht so funktioniert wei erwartert, bitte die Logdatei "
 
 #: Caldav2ics_Plugin.php:659
-msgid ""
-"Note: Settings that end with * are mandatory, all others are optional, which "
-"will be replaced by Defaults, if not specified."
-msgstr ""
-"Anmerkung: Einstellungen die mit * enden sind erforderlich, alle anderen "
-"sind optional, diese werden durch Standardwerte ersetzt, wenn nicht "
-"angegeben."
+msgid "Note: Settings that end with * are mandatory, all others are optional, which will be replaced by Defaults, if not specified."
+msgstr "Anmerkung: Einstellungen die mit * enden sind erforderlich, alle anderen sind optional, diese werden durch Standardwerte ersetzt, wenn nicht angegeben."
 
 #: Caldav2ics_Plugin.php:660
 msgid "Defaults are:"
@@ -127,18 +117,11 @@ msgid "ICS File(s): calendar0.ics, calendar1.ics..."
 msgstr "ICS Datei(en): calendar0.ics, calendar1ics..."
 
 #: Caldav2ics_Plugin.php:668
-msgid ""
-"ICS File(s) must be specified without PATH, will be stored in uploads/"
-"calendars. Logfile (if Logging enabeled) will be cron.log in PluginDir."
-msgstr ""
-"Die ICS Datei(en) muessen ohne Pfad angegeben werden, sie werden gespeichert "
-"unter uploads/calendars. Die Logdatei (falls Logging eingeschaltet) ist cron."
-"log im PluginDir."
+msgid "ICS File(s) must be specified without PATH, will be stored in uploads/calendars. Logfile (if Logging enabeled) will be cron.log in PluginDir."
+msgstr "Die ICS Datei(en) muessen ohne Pfad angegeben werden, sie werden gespeichert unter uploads/calendars. Die Logdatei (falls Logging eingeschaltet) ist cron.log im PluginDir."
 
 #: wp-caldav2ics.php:29
-msgid ""
-"Error: plugin \"WP-CalDav2ICS\" requires a newer version of PHP to be "
-"running."
+msgid "Error: plugin \"WP-CalDav2ICS\" requires a newer version of PHP to be running."
 msgstr "Fehler: Das Plugin \"CalDav2ICS\" erfordert eine neuere PHP Version."
 
 #: wp-caldav2ics.php:30
