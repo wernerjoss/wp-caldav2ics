@@ -79,6 +79,9 @@ or
 3. New Multi-Calendar Feature (from Version 1.1.0)
 
 == Changelog ==
+= 1.1.1 =
+Fixed Multi-Calendar ICS File save issue
+
 = 1.1.0 =
 Added Multi-Calendar Function, that is, you can now convert multiple Calendars at once (see Screenshot #3)
 moved Backend styles to separate File (css/style.css)

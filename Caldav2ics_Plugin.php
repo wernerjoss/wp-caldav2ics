@@ -243,6 +243,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		$CalendarPWs = unserialize($CalendarOptions['caldav2ics_calendar_passwords']);
 		$CalendarFiles = unserialize($CalendarOptions['caldav2ics_calendar_files']);
 		$index = 0;	// NICHT 1 !
+		// DONE: NICHT alles in EINE Datei schreiben - s.u. :) 23.03.19
 		foreach ($CalendarURLs as $CalendarURL) {
 			$userkeys = array_keys($CalendarUsers);
 			$CalendarUser = $CalendarUsers[$userkeys[$index]];
@@ -424,8 +425,8 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				fwrite($handle, 'END:VCALENDAR'."\r\n");
 			}
 			++$index;
+			fclose($handle);	// muss hierher ! (nicht erst hinter die folgende Klammer... 23.03.19)
 		}
-		fclose($handle);
 		if ($LogEnabeled) { 
 			fclose($loghandle);
 		}
