@@ -15,7 +15,7 @@ Automatically create ICS File from CalDav Calendar
 Ever thought about to use your (remote) CalDav Calendar(s) as an automatic data source for your favourite WP Calendar Plugin ?
 Searched for a Plugin that would provide this functionality in the WP Plugins Directory and found nothing useful ?
 Well, in case of 'Yes' to both questions, this is for You :) .
-Just read the [whole story](https://hoernerfranzracing.de/werner/kde-linux-web/wp-caldav2ics) to check out if this will fit your needs...
+Just read the whole story at https://hoernerfranzracing.de/werner/kde-linux-web/wp-caldav2ics to check out if this will fit your needs...
 And yes, Calendar(s) is correct from Version 1.1.0 - you are no longer limited to just ONE Calendar Source !
 
 == Installation ==
