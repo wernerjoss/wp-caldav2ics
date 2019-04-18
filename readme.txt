@@ -1,11 +1,11 @@
 === WP-CalDav2ICS ===
 Contributors: hoernerfranz
-Tags: Calendar, ical, ics, iCalendar, CalDav, CalDav Calendar, WP Cron, WP Crontrol, Ical sync, ClassicPress
+Tags: Calendar, ical, ics, iCalendar, CalDav, CalDav Calendar, WP Cron, WP Crontrol, Ical sync, ClassicPress, NextCloud, OwnCloud
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 4.4
 Tested up to: 5.1
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 Requires PHP: 5.6
 
 Automatically create ICS File from CalDav Calendar
@@ -15,7 +15,7 @@ Automatically create ICS File from CalDav Calendar
 Ever thought about to use your (remote) CalDav Calendar(s) as an automatic data source for your favourite WP Calendar Plugin ?
 Searched for a Plugin that would provide this functionality in the WP Plugins Directory and found nothing useful ?
 Well, in case of 'Yes' to both questions, this is for You :) .
-Just read the whole story at https://hoernerfranzracing.de/werner/?page_id=1958 to check out if this will fit your needs...
+Just read the [whole story](https://hoernerfranzracing.de/werner/kde-linux-web/wp-caldav2ics) to check out if this will fit your needs...
 And yes, Calendar(s) is correct from Version 1.1.0 - you are no longer limited to just ONE Calendar Source !
 
 == Installation ==
