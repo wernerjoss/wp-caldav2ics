@@ -14,7 +14,8 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		$CalendarOptions = $this->getCalendarOptions();
 		$calNum = 1;
 		foreach(($calURLs = unserialize($CalendarOptions['caldav2ics_calendar_urls']))  as $calURL) {
-			if (false == wp_http_validate_url($calURL)) {
+			//	if (false == wp_http_validate_url($calURL)) {	// replace by esc_url_raw, as wp_http_validate_url rejects local hosts 24.06.19
+			if( esc_url_raw($calURL) != $calURL ) {
 				return "Invalid Calendar URL:".$calURL." for Calendar # ".$calNum;
 			}
 			++$calNum;

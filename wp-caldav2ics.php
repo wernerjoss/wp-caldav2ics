@@ -2,7 +2,7 @@
 /*
    Plugin Name: WP-CalDav2ICS
    Plugin URI: http://wordpress.org/extend/plugins/wp-caldav2ics/
-   Version: 1.1.1
+   Version: 1.1.2
    Author: Werner Joss
    Description: Create ICS File from CalDav Calendar
    Text Domain: wp-caldav2ics
