@@ -203,9 +203,9 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 	public function bl_cron_exec() {
 		// Read CalDav Calendar and write to ics File
 		if (($this->getOption("Logging","true") == 'true') || WP_DEBUG)	{
-			$LogEnabeled = true;
+			$LogEnabled = true;
 		}	else{
-			$LogEnabeled = false;
+			$LogEnabled = false;
 		}
 		// $icsdir = plugin_dir_path( __FILE__ );	// do not store data in plugin dir
 		$icsdir = ABSPATH."/wp-content/uploads/calendars";	// 09.11.18
@@ -213,7 +213,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			wp_mkdir_p($icsdir);
 		}
 		$LogFile = plugin_dir_path( __FILE__ ).'/cron.log';
-		if ($LogEnabeled)	{
+		if ($LogEnabled)	{
 			$loghandle = fopen($LogFile, 'w') or wp_die('Cannot open file:  '.$LogFile);
 			$date = new DateTime();
 			$date = $date->format("y:m:d h:i:s");
@@ -231,7 +231,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			_e('Error - You have currently one or more invalid mandatory Options set:');
 			echo "<br>".$this->CheckMandatoryOptions()."</p>";
 			echo("Invalid CalendarURL(s) and/or Credentials, aborting!<br>");
-			if ($LogEnabeled)	{
+			if ($LogEnabled)	{
 				fwrite($loghandle, "Invalid CalendarURL(s) and/or Credentials, aborting!\n");
 				fclose($loghandle);
 			}
@@ -268,7 +268,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			echo "Calnr:".$index." File: ".$ICalFile."<br>";
 			*/
 			//	break;
-			if ($LogEnabeled)	{
+			if ($LogEnabled)	{
 				fwrite($loghandle, "CalendarURL:".$CalendarURL."\n");
 				/* disable writing user/pw to LogFile 22.01.19
 				fwrite($loghandle, "Username".$this->Mandatory_Options['Username']."\n");
@@ -323,112 +323,90 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				// retrieve body from response:
 				$body = wp_remote_retrieve_body($response);
 				$body_r = print_r($body, true);  // keep string array representation of body for logging and analysis 13.01.19
-				if ($LogEnabeled) { 
-					fwrite($loghandle, ($body_r));
-				}
-				
+				/*
+				print_r($body);
+				*/
 				// Get the useful part of the response
 				
-				// first check which Tag the Server returns to mark calendar data	13.01.19
-				$Tag = '//cal:calendar-data';	// Default
-				if (stripos($body, 'c:calendar-data'))  {	//  synology nas
-						$Tag = '//C:calendar-data';
-				}
-				if (stripos($body, 'cal:calendar-data'))  {  // sabre.io 
-						$Tag = '//cal:calendar-data';
-				}
-				if (stripos($body, '<calendar-data'))  {  // mailbox.org OX
-						$Tag = '//calendar-data';
-				}
-				if ($LogEnabeled) { 
-					fwrite($loghandle, "Tag:".$Tag."\n");
-				}
-				$xmlStr = $body_r;
-				if (stripos($body, '<calendar-data'))  {  // mailbox.org , md2002 22.01.19
-					if (stripos($CalendarURL, 'dav.mailbox.org'))	{
-						$xmlStr = str_replace('<![CDATA[', '', $xmlStr);	// remove CDATA cruft that prevents $xml->xpath from working
-						$xmlStr = str_replace(']]>', '', $xmlStr);
-						$xmlStr = str_replace('xmlns=', 'ns=', $xmlStr); // see comments on http://php.net/manual/de/simplexmlelement.xpath.php
-					}
-				}
-				if ($LogEnabeled)   fwrite($loghandle, $xmlStr);
-				$xml = new SimpleXMLElement($xmlStr);   // (re-)create proper xml Object
-				$data = $xml->xpath($Tag);   // use Tag found in response to exctract data, see above 13.01.19
-				if (false == $data)	{	// issue Error Message if $xml->xpath cannot be evaluated
-					$handle = fopen($ICalFile, 'w') or wp_die('Cannot open file:  '.$ICalFile);
-					fwrite($handle, "ERROR: Your Server's response is invalid and cannot be parsed - please enable Logging and check the Logfile !\n");
-					fclose($handle);
-					echo "<p style='color:red;font-weight:bold;'>";
-					_e("ERROR: Your Server's response is invalid and cannot be parsed - please enable Logging and check the Logfile !");
-					echo "</p>";
-					return;
-				}
-				$data_r = print_r($data, true);
-				if ($LogEnabeled) { 
-					fwrite($loghandle, "data:\n");
-					fwrite($loghandle, ($data_r));
-				}
+				// write body_r to file so it can be read as string array 11.11.19
+				$ResFile = "result.txt";
+				$reshandle = fopen($ResFile, 'w');
+				fwrite($reshandle, $body_r);
+				fclose($reshandle);
+				$text = file($ResFile);
 				
-				// create valid ICS File with only ONE Vcalendar !
-				$handle = fopen($ICalFile, 'w') or wp_die('Cannot open file:  '.$ICalFile);
+				// Parse events
+				// $calendar_events = array();	// obsolete
+				$handle = fopen($ICalFile, 'w') or die('Cannot open file:  '.$ICalFile);
+				
+				// create valid ICS File with only ONE Vcalendar !	-	use simple approach from https://github.com/wernerjoss/caldav2ics (no XML Parsing !) 11.11.19
 				// write VCALENDAR header
 				fwrite($handle, 'BEGIN:VCALENDAR'."\r\n");
 				fwrite($handle, 'VERSION:2.0'."\r\n");
-				fwrite($handle, 'PRODID:-//hoernerfranzracing/wp-caldav2ics plugin'."\r\n");
+				fwrite($handle, 'PRODID:-//hoernerfranzracing/caldav2ics.php'."\r\n");
 				// find and write TIMEZONE data, new feature, 27.12.19
 				$skip = true;
-				$lines = explode("\n", $data_r);
-				foreach ($lines as $line)   {
-					if ($this->startswith($line,'BEGIN:VTIMEZONE'))	{
-						$skip = false;
-					}
-					if ( !$skip )	{
-						fwrite($handle, $line."\r\n"); // write everything between 'BEGIN:VTIMEZONE' and 'END:VTIMEZONE'
-						// echo $line."\n";
-					}
-					if ($this->startswith($line,'END:VTIMEZONE'))	{
-						$skip = true;
-					}
-				}
-				// exctract events
-				// parse $data as $vcalendars, do NOT write VCALENDAR header for each one, just the event data /TZ data etc...
-				foreach ($data as $vcalendars) {
-					$lines = explode("\n", $vcalendars);
-					$skip = false;
-					foreach ($lines as $line) {
-						$line = trim($line);
-						if (strlen($line))	{
-							if ($this->startswith($line,'BEGIN:VCALENDAR'))	{
-								$skip = true;
-							}
-							if ($this->startswith($line,'PRODID:'))	{
-								$skip = true;
-							}
-							if (strstr($line,'VERSION:'))	{
-								$skip = true;	// VERSION can appear in different places
-							}
-							if ($this->startswith($line,'CALSCALE:'))	{
-								$skip = true;
-							}
-							if ($this->startswith($line,'BEGIN:VEVENT'))	{
+				$wroteTZ = false;
+				//	$lines = explode("\n", $response);
+				$lines[] = array();
+				$l = 0;
+				
+				foreach ($text as $line)   {
+					$line = trim($line);
+					//	var_dump($line);
+					if (strlen($line) > 0)	{
+						$l++;
+						if ($LogEnabled)	fwrite($loghandle, $line."\r\n");	// sieht an sich gut aus, ABER alles weitere wird nicht erkannt !!! - ist ja auch nur 1 Zeile :)
+						if ( !$wroteTZ )	{
+							if ($this->startswith($line,'BEGIN:VTIMEZONE'))	{	// must be $this->startswith ! 11.11.19
 								$skip = false;
-								fwrite($handle, "\r\n");	// improves readability, but triggers warning in validator :)
-							}
-							if ($this->startswith($line,'END:VCALENDAR'))	{
-								$skip = true;
 							}
 							if ( !$skip )	{
-								fwrite($handle, $line."\r\n");
+								fwrite($handle, $line."\r\n"); // write everything between 'BEGIN:VTIMEZONE' and 'END:VTIMEZONE'
+							}
+							if ($this->startswith($line,'END:VTIMEZONE'))	{
+								$skip = true;
+								$wroteTZ = true;    // only write VTIMEZONE entry once
 							}
 						}
 					}
 				}
+				if ($LogEnabled)	fwrite($loghandle, "Lines processed: ".$l."\r\n");
+				// parse $response, do NOT write VCALENDAR header for each one, just the event data
+				$skip = true;
+				foreach ($text as $line) {
+					$line = trim($line);
+					if (strlen($line) > 0)	{
+						if (strstr($line,'BEGIN:VCALENDAR'))	{	// first occurrence might not be at line start
+							$skip = true;
+						}
+						if ($this->startswith($line,'PRODID:'))	{
+							$skip = true;
+						}
+						if (strstr($line,'VERSION:'))	{
+							$skip = true;	// VERSION can appear in different places
+						}
+						if ($this->startswith($line,'CALSCALE:'))	{
+							$skip = true;
+						}
+						if ($this->startswith($line,'BEGIN:VEVENT'))	{
+							$skip = false;
+							//fwrite($handle, "\r\n");	// improves readability, but triggers warning in validator :)
+						}
+						if ($this->startswith($line,'END:VCALENDAR'))	{
+							$skip = true;
+						}
+						if ( !$skip )	{
+							fwrite($handle, $line."\r\n");
+						}
+					}
+				}
 				fwrite($handle, 'END:VCALENDAR'."\r\n");
+				fclose($handle);	// muss hierher ! (nicht erst hinter die folgende Klammer... 23.03.19)
 			}
 			++$index;
-			fclose($handle);	// muss hierher ! (nicht erst hinter die folgende Klammer... 23.03.19)
 		}
-		if ($LogEnabeled) { 
+		if ($LogEnabled) { 
 			fclose($loghandle);
 		}
 	}
