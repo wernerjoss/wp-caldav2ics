@@ -1,8 +1,7 @@
 <?php
 /*
-Dies ist die Entwicklungsversion hin zu einer 'Mehrere Kalender' Version, siehe ToDo.txt
-Achtung: diese darf vorest nicht in ein öffentliches Repo kommen !
-10.02.19: funktioniert auf hoernerfranzracing.de :)
+11.11.19: neuer Parser ohne das XML Gedöns :)
+20.11.19: Warnung in Ical File wenn Server Antwort keine Kalenderdaten enthält
 */
 
 include_once('Caldav2ics_LifeCycle.php');
@@ -329,6 +328,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				// Get the useful part of the response
 				
 				// write body_r to file so it can be read as string array 11.11.19
+				// TODO: use better approach :)
 				$ResFile = "result.txt";
 				$reshandle = fopen($ResFile, 'w');
 				fwrite($reshandle, $body_r);
@@ -374,11 +374,13 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				if ($LogEnabled)	fwrite($loghandle, "Lines processed: ".$l."\r\n");
 				// parse $response, do NOT write VCALENDAR header for each one, just the event data
 				$skip = true;
+				$found_ical_data = false;
 				foreach ($text as $line) {
 					$line = trim($line);
 					if (strlen($line) > 0)	{
 						if (strstr($line,'BEGIN:VCALENDAR'))	{	// first occurrence might not be at line start
 							$skip = true;
+							$found_ical_data = true;
 						}
 						if ($this->startswith($line,'PRODID:'))	{
 							$skip = true;
@@ -402,6 +404,9 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 					}
 				}
 				fwrite($handle, 'END:VCALENDAR'."\r\n");
+				if ((!$found_ical_data) && ($LogEnabled))	{
+					fwrite($loghandle, "WARNING: no valid Ical Data found in Server Response !\r\n");
+				}
 				fclose($handle);	// muss hierher ! (nicht erst hinter die folgende Klammer... 23.03.19)
 			}
 			++$index;
