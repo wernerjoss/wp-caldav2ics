@@ -328,7 +328,8 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				// Get the useful part of the response
 				
 				// write body_r to temporary file so it can be read as string array 11.11.19
-				$ResFile = get_temp_dir()."/result.txt";
+				$ResFile = get_temp_dir()."result.txt";
+				if ($LogEnabled)	fwrite($loghandle, "using temp file: ".$ResFile." for Server Response\r\n");
 				$reshandle = fopen($ResFile, 'w');
 				fwrite($reshandle, $body_r);
 				fclose($reshandle);
