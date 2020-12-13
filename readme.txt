@@ -4,8 +4,8 @@ Tags: Calendar, ical, ics, iCalendar, CalDav, CalDav Calendar, WP Cron, WP Cront
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 4.4
-Tested up to: 5.3
-Stable tag: 1.2.0
+Tested up to: 5.6
+Stable tag: 1.2.1
 Requires PHP: 5.6
 
 Automatically create ICS File from CalDav Calendar
@@ -79,6 +79,9 @@ or
 3. New Multi-Calendar Feature (from Version 1.1.0)
 
 == Changelog ==
+= 1.2.1 =
+13.12.20: Tested with WP 5.6
+
 = 1.2.0 =
 20.11.19: replace XML Parser for server response with simple line-by-line parsing from https://github.com/wernerjoss/caldav2ics, add Warning if no valid Ical Data found in Server Response
 
