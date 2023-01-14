@@ -2,6 +2,8 @@
 /*
 11.11.19: neuer Parser ohne das XML Gedöns :)
 20.11.19: Warnung in Ical File wenn Server Antwort keine Kalenderdaten enthält
+Jan 2023: several modifications in the code made by Jörg-Peter Gehrke, send to W. Joss for review
+13.01.23: 1st review by WJ, NOT finished yet !
 */
 
 include_once('Caldav2ics_LifeCycle.php');
@@ -55,6 +57,8 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			'CronInterval' => array(__('Cron Interval', 'wp-caldav2ics'),
 										'daily', 'twicedaily', 'hourly'),
 			'Logging' => array(__('enable Logging', 'wp-caldav2ics'),'true','false'),
+			// 'maxAttempts' => array(__('max Attempts','wp-caldav2ics'),'1','2','3'),		//JPG CODE - Menu option selecting the number of loops for data pulling for each calendar
+			//	disabled WJ 14.01.23, see comments in email
 		);
 	}
 	
@@ -208,6 +212,9 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		}
 		// $icsdir = plugin_dir_path( __FILE__ );	// do not store data in plugin dir
 		$icsdir = ABSPATH."/wp-content/uploads/calendars";	// 09.11.18
+		//	$maxAttempts = $this->getOption("maxAttempts");		// JPG Code Definition of variable $maxAttempts from plugin admin page (see line 59)
+		$maxAttempts = 3; // hardcoded, WJ 14.01.23
+		// replace $loopcnt with $maxAttempts for clarity WJ
 		if (! file_exists($icsdir))	{
 			wp_mkdir_p($icsdir);
 		}
@@ -220,7 +227,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		}
 		
 		// Setup the calendar URL and the credentials here, from the Plugin Settings Page
-		/*
+		/*										// should this be removed from file ??
 		$this->Mandatory_Options['CalendarURL'] = $this->getOption('CalendarURL');
 			$this->Mandatory_Options['Username'] = $this->getOption('Username');
 			$this->Mandatory_Options['Password'] = $this->getOption('Password');
@@ -269,11 +276,12 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			//	break;
 			if ($LogEnabled)	{
 				fwrite($loghandle, "CalendarURL:".$CalendarURL."\n");
-				/* disable writing user/pw to LogFile 22.01.19
+				fwrite($loghandle, "Max. attempts for data withdrawal from CALDAV server :" .$maxAttempts. " \r\n"); //JPG Code - needs decision by reviewer whether to maintain looping
+				/* disable writing user/pw to LogFile 22.01.19		// JPG REMARK : should be deleted from file
 				fwrite($loghandle, "Username".$this->Mandatory_Options['Username']."\n");
 				fwrite($loghandle, "Pw:".$this->Mandatory_Options['Password']."\n");
 				*/
-			}	
+				}	
 			
 			// Simple caching system, feel free to change the delay
 			$fmdelay = 5;	// caching not really needed, as ICalFile will be created only at cron Intervals
@@ -308,6 +316,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				
 				// new approach using wp_remote_request() 16.11.18
 				$args = array(
+				'timeout'=> 10 ,		// JPG Code - IMPORTANT !! ensures "waiting" for response from CALDAV server, in my case it timed out and data where not pulled!
 				'headers' => array(
 				'Authorization' => 'Basic '. base64_encode( $CalendarUser . ':' . $CalendarPW ),
 				'Content-Type' => 'application/xml; charset=utf-8',
@@ -316,35 +325,58 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				'method' => 'REPORT',
 				'body' => $body,
 				);
+				//====================================================================================
+				//major modification by JPG (Start) - LOOP to ensure getting a successful response from CALDAV sever ! - Reviewer to decide whether to keep this loop based on $maxAttempts see line 213 !
 
-				$response = wp_remote_request( $CalendarURL, $args ); // this is now an Object of Type Requests_Utility_CaseInsensitiveDictionary !
+				$numAttempts = 1;							// JPG Code - Reviewer to decide
+				While ($numAttempts <= $maxAttempts) {					// $maxAttempts is defined at plugin admin page see line 59
+					$jpgdate = new DateTime(); 				// JPG Code - puts actual time in logfile when data are pulled
+					$jpgdate = $jpgdate->format("YmdHis"); 			// JPG Code - Reviewer to decide	
+					$response = wp_remote_request( $CalendarURL, $args ); // this is now an Object of Type Requests_Utility_CaseInsensitiveDictionary !
 				
-				// retrieve body from response:
-				$body = wp_remote_retrieve_body($response);
-				$body_r = print_r($body, true);  // keep string array representation of body for logging and analysis 13.01.19
-				/*
-				print_r($body);
-				*/
-				// Get the useful part of the response
+					// retrieve body from response:
+					$body = wp_remote_retrieve_body($response);
+					$body_r = print_r($body, true);  // keep string array representation of body for logging and analysis 13.01.19
+					/*
+					print_r($body);
+					*/
+					// Get the useful part of the response
 				
-				// write body_r to temporary file so it can be read as string array 11.11.19
-				$ResFile = get_temp_dir()."result.txt";
-				if ($LogEnabled)	fwrite($loghandle, "using temp file: ".$ResFile." for Server Response\r\n");
-				$reshandle = fopen($ResFile, 'w');
-				fwrite($reshandle, $body_r);
-				fclose($reshandle);
-				$text = file($ResFile);
+					// write body_r to temporary file so it can be read as string array 11.11.19
+					$ResFile = get_temp_dir()."result.txt";
+					$reshandle = fopen($ResFile, 'w');
+					fwrite($reshandle, $body_r);
+					fclose($reshandle);
+					$jpgfsize = filesize($ResFile); 	 		// JPG Code - check whether "result.txt" contains data or is empty 
+					$text = file($ResFile);
+					if ($LogEnabled)	{
+						fwrite($loghandle, "using temp file: ".$ResFile." for Server Response at time: ".$jpgdate." numAttempts: ".$numAttempts." size $ resfile :".$jpgfsize."b \r\n");
+					}							// JPG Code - put "result.txt" file info in log file "cron.log"
+					If ($jpgfsize > 100)	{				// JPG Code - 100 b as file size choosen
+						$numAttempts = 100;					// JPG Code - working with a counter ensuring not ending up in "endless loop" :-)
+					}							// JPG Code
+					$numAttempts++;						// JPG Code
+				}
+				// End major change JPG
+				// ========================================================================================
 				
+				//	TODO: handle data retrieve failure correctly, see e.g. 
+				//	https://developer.wordpress.org/reference/functions/wp_remote_request/	WJ 14.01.23
+
 				// Parse events
 				// $calendar_events = array();	// obsolete
-				$handle = fopen($ICalFile, 'w') or die('Cannot open file:  '.$ICalFile);
+				//$handle = fopen($ICalFile, 'w') or die('Cannot open file:  '.$ICalFile);
 				
 				// create valid ICS File with only ONE Vcalendar !	-	use simple approach from https://github.com/wernerjoss/caldav2ics (no XML Parsing !) 11.11.19
-				// write VCALENDAR header
-				fwrite($handle, 'BEGIN:VCALENDAR'."\r\n");
-				fwrite($handle, 'VERSION:2.0'."\r\n");
-				fwrite($handle, 'PRODID:-//hoernerfranzracing/caldav2ics.php'."\r\n");
-				// find and write TIMEZONE data, new feature, 27.12.19
+				/** JPG Modifications: Here comes another strategy consideration. Would propose to overwrite the existing calendar.ics file only if data have been received from the CALDAV server. 
+				* By opening and writing the first lines to calendar.ics ($handle) - the old file gets overwritten. In case no information received from CALDAV server the calendar.ics file does not 
+				* contain any information. Therefore the new approach is writing the product information etc. only when real data have been retrieved successfully. ($jpgfsize > 100 b).
+				* See code in lines 390 - 393 */
+				// write VCALENDAR header				// Reviewer to decide about new approach
+				//fwrite($handle, 'BEGIN:VCALENDAR'."\r\n");		// Reviewer to decide about new approach
+				//fwrite($handle, 'VERSION:2.0'."\r\n");		// Reviewer to decide about new approach
+				//fwrite($handle, 'PRODID:-//hoernerfranzracing/caldav2ics.php'."\r\n");// Reviewer to decide about new approach
+				// find and write TIMEZONE data, new feature, 27.12.19		// Reviewer to decide about new approach
 				$skip = true;
 				$wroteTZ = false;
 				//	$lines = explode("\n", $response);
@@ -359,6 +391,13 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 						if ($LogEnabled)	fwrite($loghandle, $line."\r\n");	// sieht an sich gut aus, ABER alles weitere wird nicht erkannt !!! - ist ja auch nur 1 Zeile :)
 						if ( !$wroteTZ )	{
 							if ($this->startswith($line,'BEGIN:VTIMEZONE'))	{	// must be $this->startswith ! 11.11.19
+								// Start JPG modification 
+								// write VCALENDAR header only if valid TIMEZONE data found, JPG approach
+								$handle = fopen($ICalFile, 'w') or die('Cannot open file:  '.$ICalFile); // Reviewer to decide about new approach 
+								fwrite($handle, 'BEGIN:VCALENDAR'."\r\n");		// Reviewer to decide about new approach
+								fwrite($handle, 'VERSION:2.0'."\r\n");			// Reviewer to decide about new approach
+								fwrite($handle, 'PRODID:-//hoernerfranzracing/caldav2ics.php'."\r\n");	// Reviewer to decide about new approach
+								// End JPG modification 
 								$skip = false;
 							}
 							if ( !$skip )	{
@@ -371,13 +410,30 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 						}
 					}
 				}
+				// new Action if Server does not write valid VTIMEZONE entry 14.01.23	WJ
+				if ( !$wroteTZ ) {
+					if ($LogEnabled)	fwrite($loghandle, "no valid TIMEZONE Info found in Server response, aborting !\r\n");
+					fclose($handle);
+					return;
+				}
 				if ($LogEnabled)	fwrite($loghandle, "Lines processed: ".$l."\r\n");
 				// parse $response, do NOT write VCALENDAR header for each one, just the event data
 				$skip = true;
 				$found_ical_data = false;
 				foreach ($text as $line) {
-					$line = trim($line);
+					$line = trim($line,"\n");	//mod. by J-P. Gehrke, original code was $line = trim($line)
+					/** This is important modification. The ics files from my CALDAV server contains info in long lines that are wrapped. By just "trimming" also leading spaces of the wrapped lines will 
+					* be eliminated. This creates problems using https://icalfilter.com reading the *.ics file. Therefore it is proposed useing the command "trim($line, "\n").
+					*/
+					//	$invalidLine = false;		//introduced by J-P. Gehrke, trigger for exclusion of X-TINE20-CONTAINER line in *.ics file, 17-NOV2022
+					//	$invalidLine is not really needed, use $skip as for other lines to discard WJ
+					/** Calendars at the CALDAV server are created using TINE 2.0 https://www.tine-groupware.de/ or its derivate "ECCLESIAS" for church communities. All *.ics files pulled
+					* from the server contain a line "X-TINE20-CONTAINER:abcdefg....xyz" for each single VEVENT. https://icalfilter.com delivers an error when finding this line in the 
+					* *.ics file. https://icalfilter is the key to create selective calendars for particular groups and events on the webpage. See line 440 !
+					* Open for recommendations from Reviewer avoiding the problem desribed. 
+					*/
 					if (strlen($line) > 0)	{
+						$invalidLine = false;
 						if (strstr($line,'BEGIN:VCALENDAR'))	{	// first occurrence might not be at line start
 							$skip = true;
 							$found_ical_data = true;
@@ -395,10 +451,17 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 							$skip = false;
 							//fwrite($handle, "\r\n");	// improves readability, but triggers warning in validator :)
 						}
+						if ($this->startswith($line,'X-TINE20-CONTAINER:'))		{ 
+							//introduced by J-P. Gehrke, trigger for exclusion of X-TINE20-CONTAINER line in *.ics file, 17-NOV2022
+							/** Reviewer to decide whether this is an appropriate option having this "hard coded" in the programme. Is not my favoured approach. 
+							* Option would be to ask for the string to be deleted as variable at the plugin admin page 
+							*/
+							$invalidLine = true; // invalid line, do not write this !
+						}
 						if ($this->startswith($line,'END:VCALENDAR'))	{
 							$skip = true;
 						}
-						if ( !$skip )	{
+						if ( !$skip && !$invalidLine)	{ //mod by J-P. Gehrke original code was (!skip) without the !jpg condition 
 							fwrite($handle, $line."\r\n");
 						}
 					}
@@ -407,7 +470,10 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				if ((!$found_ical_data) && ($LogEnabled))	{
 					fwrite($loghandle, "WARNING: no valid Ical Data found in Server Response !\r\n");
 				}
-				fclose($handle);	// muss hierher ! (nicht erst hinter die folgende Klammer... 23.03.19)
+				If (is_resource($handle)) {	// JPG Code, only close $handle if it was open and $handle was defined - Reviewer to decide 
+					// looks ok WJ
+					fclose($handle);	// muss hierher ! (nicht erst hinter die folgende Klammer... 23.03.19)
+				}
 			}
 			++$index;
 		}
@@ -484,7 +550,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		
 		// DONE: get/set $CalendarOptions (=array of $CalendarOptions):
 		$CalendarOptions = $this->getCalendarOptions();
-		//	print_r($CalendarOptions);
+		//	print_r($CalendarOptions);				// should this line be deleted or is it needed for debugging ?
 		$GeneralOptionMetaData = $this->getOptionMetaData();
 		if (isset($_POST['updateSettings'])) {	// 'submit' Button pressed ? -> show Message
 			// Save Posted Options for Calendars
@@ -562,6 +628,8 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		}
 		
 		// HTML for the page
+		// JPG - ATTENTION : see line 669, changed input type from "text" to "password" - Reviewer to decide !
+		// password input type looks better, but does not provide any additional security, anyway, leave this for now as is :-)  WJ		
 		$settingsGroup = get_class($this) . '-settings-group';
 		?>
 		<div class="wrap">
@@ -610,7 +678,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			if(is_array($cal_password_Array)) {
 			foreach($cal_password_Array as $key=>$val) { ?>
 				<input type="text" name="caldav2ics_calendar_passwordKey[]" value="<?php _e($key, 'wp-caldav2ics') ?>" style="width:40px;" disabled="disabled" />
-				<input type="text" name="caldav2ics_calendar_passwords[]" class="calendars_options" value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
+				<input type="password" name="caldav2ics_calendar_passwords[]" class="calendars_options" value="<?php _e($val, 'wp-caldav2ics') ?>" /><br />
 			<?php } 
 			} ?>
 			<input type="text" id="addNewKey" name="caldav2ics_calendar_passwordKey[]" value="" style="width:40px;" value="<?php _e($key+1, 'wp-caldav2ics') ?>" disabled="disabled" />
@@ -665,6 +733,10 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		echo ("</li><li>");
 		_e('enable Logging: false', 'wp-caldav2ics');
 		echo ("</li><li>");
+		/*	WJ 14.01.23
+		_e('Maximum attempts for data withdrawal from CALDAV server: 2', 'wp-caldav2ics'); 	// JPG Code - Reviewer to decide whether data pull looping see line 331 shall be maintained !
+		echo ("</li><li>");
+		*/
 		_e('ICS File(s): calendar0.ics, calendar1.ics...', 'wp-caldav2ics');
 		echo ("</li></ul>");
 		_e('ICS File(s) must be specified without PATH, will be stored in uploads/calendars. Logfile (if Logging enabeled) will be cron.log in PluginDir.', 'wp-caldav2ics');
