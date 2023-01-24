@@ -4,9 +4,10 @@ Tags: Calendar, ical, ics, iCalendar, CalDav, CalDav Calendar, WP Cron, WP Cront
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 4.4
-Tested up to: 5.6
+Tested up to: 5.9
 Stable tag: 1.2.1
 Requires PHP: 5.6
+Tested up to PHP: 7.4
 
 Automatically create ICS File from CalDav Calendar
 

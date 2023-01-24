@@ -71,7 +71,8 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		$options = $this->getOptionMetaData();
 		if (!empty($options)) {
 			foreach ($options as $key => $arr) {
-				if (is_array($arr) && count($arr > 1)) {
+				//	if (is_array($arr) && count($arr > 1)) {	// does not seem to work anymore from WP 6.1.1 :-/
+				if (count($arr > 1)) {
 					$this->addOption($key, $arr[1]);
 				}
 			}
@@ -145,6 +146,13 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			$cal_url_Array = array($DeprecatedCalFile);
 			update_option('caldav2ics_calendar_files', serialize($cal_url_Array));
 			$this->deleteOption('CalendarFile');
+		}
+		// TODO: handle new Option CalendarExcludes	24.01.23
+		$DeprecatedCalExclude = $this->getOption('CalendarExclude');
+		if (strlen(trim($DeprecatedCalExclude)) > 0)	{
+			$cal_url_Array = array($DeprecatedCalExclude);
+			update_option('caldav2ics_calendar_excludes', serialize($cal_url_Array));
+			$this->deleteOption('CalendarExclude');
 		}
 		$NewOptions = $this->getCalendarOptions();
 		//	print_r($NewOptions);
@@ -244,6 +252,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		$CalendarUsers = unserialize($CalendarOptions['caldav2ics_calendar_users']);
 		$CalendarPWs = unserialize($CalendarOptions['caldav2ics_calendar_passwords']);
 		$CalendarFiles = unserialize($CalendarOptions['caldav2ics_calendar_files']);
+		$CalendarExcludes = unserialize($CalendarOptions['caldav2ics_calendar_excludes']);
 		$index = 0;	// NICHT 1 !
 		// DONE: NICHT alles in EINE Datei schreiben - s.u. :) 23.03.19
 		foreach ($CalendarURLs as $CalendarURL) {
@@ -271,8 +280,11 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			//	break;
 			if ($LogEnabled)	{
 				fwrite($loghandle, "CalendarURL:".$CalendarURL."\n");
-				fwrite($loghandle, "Max. attempts for data withdrawal from CALDAV server :" .$maxAttempts. " \r\n"); 
-				}	
+				fwrite($loghandle, "Max. attempts for data withdrawal from CALDAV server :" .$maxAttempts. " \r\n");
+				$excludekeys = array_keys($CalendarExcludes);
+				$CalendarExclude = $CalendarExcludes[$excludekeys[$index]];
+				fwrite($loghandle, "CalendarExclude:".$CalendarExclude."\n"); 	// new 24.01.23
+			}	
 			
 			// Simple caching system, feel free to change the delay
 			$fmdelay = 5;	// caching not really needed, as ICalFile will be created only at cron Intervals
@@ -421,8 +433,10 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 							$skip = false;
 							//fwrite($handle, "\r\n");	// improves readability, but triggers warning in validator :)
 						}
-						if ($this->startswith($line,'X-TINE20-CONTAINER:'))		{ 
-							$invalidLine = true; // invalid line, do not write this !
+						if (!empty($CalendarExclude)) {	// new 14.01.23, check for undocumented Option $CalendarExclude :-)
+							if ($this->startswith($line, $CalendarExclude))		{ 	
+								$invalidLine = true; // invalid line, do not write this !
+							}
 						}
 						if ($this->startswith($line,'END:VCALENDAR'))	{
 							$skip = true;
@@ -494,12 +508,14 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			'caldav2ics_calendar_users' => array(),
 			'caldav2ics_calendar_passwords' => array(),
 			'caldav2ics_calendar_files' => array(),
+			'caldav2ics_calendar_excludes' => array(),	// new 24.01.23
 		);
 		// wichtig !!!:
 		$CalendarOptions['caldav2ics_calendar_urls' ] = get_option('caldav2ics_calendar_urls' );
 		$CalendarOptions['caldav2ics_calendar_users' ]= get_option('caldav2ics_calendar_users' );
 		$CalendarOptions['caldav2ics_calendar_passwords' ]= get_option('caldav2ics_calendar_passwords' );
 		$CalendarOptions['caldav2ics_calendar_files' ]= get_option('caldav2ics_calendar_files' );
+		$CalendarOptions['caldav2ics_calendar_excludes' ]= get_option('caldav2ics_calendar_excludes' );	// new 24.01.23
 		return $CalendarOptions;
 	}
 	
