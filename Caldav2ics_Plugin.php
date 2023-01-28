@@ -148,11 +148,11 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			$this->deleteOption('CalendarFile');
 		}
 		// TODO: handle new Option CalendarExcludes	24.01.23
-		$DeprecatedCalExclude = $this->getOption('CalendarExclude');
-		if (strlen(trim($DeprecatedCalExclude)) > 0)	{
-			$cal_url_Array = array($DeprecatedCalExclude);
+		$DeprecatedCalExcludes = $this->getOption('CalendarExcludes');
+		if (strlen(trim($DeprecatedCalExcludes)) > 0)	{
+			$cal_url_Array = array($DeprecatedCalExcludes);
 			update_option('caldav2ics_calendar_excludes', serialize($cal_url_Array));
-			$this->deleteOption('CalendarExclude');
+			$this->deleteOption('CalendarExcludes');
 		}
 		$NewOptions = $this->getCalendarOptions();
 		//	print_r($NewOptions);
