@@ -271,18 +271,11 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			if (empty(trim($CalendarFile)))
 				$CalendarFile = "calendar".$index.".ics";
 			$ICalFile = $icsdir.'/'.$CalendarFile;
-			/*
-			echo "Calnr:".$index." URL:  ".$CalendarURL."<br>";
-			echo "Calnr:".$index." User: ".$CalendarUser."<br>";
-			echo "Calnr:".$index." PW: ".$CalendarPW."<br>";
-			echo "Calnr:".$index." File: ".$ICalFile."<br>";
-			*/
-			//	break;
+			$excludekeys = array_keys($CalendarExcludes);
+			$CalendarExclude = $CalendarExcludes[$excludekeys[$index]];
 			if ($LogEnabled)	{
 				fwrite($loghandle, "CalendarURL:".$CalendarURL."\n");
 				fwrite($loghandle, "Max. attempts for data withdrawal from CALDAV server :" .$maxAttempts. " \r\n");
-				$excludekeys = array_keys($CalendarExcludes);
-				$CalendarExclude = $CalendarExcludes[$excludekeys[$index]];
 				fwrite($loghandle, "CalendarExclude:".$CalendarExclude."\n"); 	// new 24.01.23
 			}	
 			
