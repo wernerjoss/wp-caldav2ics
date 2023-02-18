@@ -81,8 +81,9 @@ or
 
 == Changelog ==
 = 1.3.0 =
-25.01.23: introduced undocumented Option CalendarExcludes to filter/suppress unwanted Properties from Server Response, minor Adaptions for WP 6.1/PHP 8.x
-For more Information, see https://github.com/wernerjoss/wp-caldav2ics/exclude.md
+18.02.23: introduced undocumented Option CalendarExcludes to filter/suppress unwanted Properties from Server Response, 
+for more Information, see https://github.com/wernerjoss/wp-caldav2ics/exclude.md .
+Fix WP 6.1/PHP 8.x issue https://github.com/wernerjoss/wp-caldav2ics/issues/5 .
 
 = 1.2.1 =
 13.12.20: Tested with WP 5.6
