@@ -72,9 +72,9 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		if (!empty($options)) {
 			foreach ($options as $key => $arr) {
 				//	if (is_array($arr) && count($arr > 1)) {	// does not seem to work anymore from WP 6.1.1 :-/
-				if (count($arr > 1)) {
-					$this->addOption($key, $arr[1]);
-				}
+				//	if (count($arr > 1)) {
+				$this->addOption($key, $arr[1]);
+				//}
 			}
 		}
 	}
