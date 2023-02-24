@@ -173,9 +173,11 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			?>
 			<div class="notice notice-info is-dismissible">
 				<p>
-				<?php _e('Caldav2ICS Plugin activated - '); ?>
+				<?php _e('Caldav2ICS Plugin activated - <br>'); ?>
 				<strong>
-				<?php _e("Be sure to set correct Values in Plugin Admin Page then press 'Save Changes'  !"); 
+				<?php _e("Be sure to set correct Values in Plugin Admin Page then press 'Save Changes'  !<br>"); 
+				?>
+				<?php _e("Your PHP Version is: ".phpversion());_e("<br>please note this Plugin has only been tested up to PHP 7.4, it might not work correctly with newer Versions !"); 
 				?>
 				</strong>.</p>
 			</div>
