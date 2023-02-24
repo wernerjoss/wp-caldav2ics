@@ -57,11 +57,9 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			'CronInterval' => array(__('Cron Interval', 'wp-caldav2ics'),
 										'daily', 'twicedaily', 'hourly'),
 			'Logging' => array(__('enable Logging', 'wp-caldav2ics'),'true','false'),
-			
-			//	disabled WJ 14.01.23, see comments in email
 		);
 	}
-	
+
 	protected function getOptionValueI18nString($optionValue) {
 		$i18nValue = parent::getOptionValueI18nString($optionValue);
 		return $i18nValue;
@@ -71,10 +69,13 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		$options = $this->getOptionMetaData();
 		if (!empty($options)) {
 			foreach ($options as $key => $arr) {
-				//	if (is_array($arr) && count($arr > 1)) {	// does not seem to work anymore from WP 6.1.1 :-/
-				//	if (count($arr > 1)) {
-				$this->addOption($key, $arr[1]);
-				//}
+				try {
+					//if (is_array($arr) && count($arr > 1)) {	// does not seem to work anymore from PHP 8.0 - see https://www.php.net/manual/de/function.count.php
+					$this->addOption($key, $arr[1]);
+					//}
+				} catch (Exception $ex) {
+					echo $ex->getMessage();
+				}
 			}
 		}
 	}
