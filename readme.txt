@@ -5,9 +5,8 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 4.4
 Tested up to: 6.1
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 Requires PHP: 5.6
-Tested up to PHP: 8.1
 
 Automatically create ICS File from CalDav Calendar
 
@@ -80,10 +79,14 @@ or
 3. New Multi-Calendar Feature (from Version 1.1.0)
 
 == Changelog ==
+= 1.3.1 =
+24.02.23: show PHP Version upon Plugin Activation, issue Warning for PHP >= 8.0
+
 = 1.3.0 =
 18.02.23: introduced undocumented Option CalendarExcludes to filter/suppress unwanted Properties from Server Response, 
 for more Information, see https://github.com/wernerjoss/wp-caldav2ics/exclude.md .
 Fix WP 6.1/PHP 8.x issue https://github.com/wernerjoss/wp-caldav2ics/issues/5 .
+Tested up to PHP: 8.1
 
 = 1.2.1 =
 13.12.20: Tested with WP 5.6
