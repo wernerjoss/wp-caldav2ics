@@ -53,7 +53,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 	 */
 	public function getOptionMetaData() {
 		return array(
-			//'_version' => array('Installed Version'), // Leave this one commented-out. Uncomment to test upgrades.
+			//	'_version' => array('Installed Version'), // Leave this one commented-out. Uncomment to test upgrades.
 			'CronInterval' => array(__('Cron Interval', 'wp-caldav2ics'),
 										'daily', 'twicedaily', 'hourly'),
 			'Logging' => array(__('enable Logging', 'wp-caldav2ics'),'true','false'),
@@ -69,12 +69,12 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		$options = $this->getOptionMetaData();
 		if (!empty($options)) {
 			foreach ($options as $key => $arr) {
-				try {
-					//if (is_array($arr) && count($arr > 1)) {	// does not seem to work anymore from PHP 8.0 - see https://www.php.net/manual/de/function.count.php
-					$this->addOption($key, $arr[1]);
-					//}
-				} catch (Exception $ex) {
-					echo $ex->getMessage();
+				if (is_array($arr)) {
+					try {
+						$this->addOption($key, $arr[1]);
+					} catch (Exception $ex) {
+						echo $ex->getMessage();
+					}
 				}
 			}
 		}
@@ -175,9 +175,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				<p>
 				<?php _e('Caldav2ICS Plugin activated - <br>'); ?>
 				<strong>
-				<?php _e("Be sure to set correct Values in Plugin Admin Page then press 'Save Changes'  !<br>"); 
-				?>
-				<?php _e("Your PHP Version is: ".phpversion());_e("<br>please note this Plugin has only been tested up to PHP 7.4, it might not work correctly with newer Versions !"); 
+				<?php _e("Be sure to set correct Values in Plugin Admin Page then press 'Save Changes'  !"); 
 				?>
 				</strong>.</p>
 			</div>
@@ -274,8 +272,11 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			if (empty(trim($CalendarFile)))
 				$CalendarFile = "calendar".$index.".ics";
 			$ICalFile = $icsdir.'/'.$CalendarFile;
-			$excludekeys = array_keys($CalendarExcludes);
-			$CalendarExclude = $CalendarExcludes[$excludekeys[$index]];
+			$CalendarExclude = "";	//	default
+			if (is_array($CalendarExcludes))	{	// DAS (ohne Test is_array()) verursachte fatalen internen Fehler ab PHP 8.0 ! 25.02.23 WJ
+				$excludekeys = array_keys($CalendarExcludes);
+				$CalendarExclude = $CalendarExcludes[$excludekeys[$index]];
+			}
 			if ($LogEnabled)	{
 				fwrite($loghandle, "CalendarURL:".$CalendarURL."\n");
 				fwrite($loghandle, "Max. attempts for data withdrawal from CALDAV server :" .$maxAttempts. " \r\n");

@@ -5,7 +5,7 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 4.4
 Tested up to: 6.1
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 Requires PHP: 5.6
 
 Automatically create ICS File from CalDav Calendar
@@ -79,6 +79,9 @@ or
 3. New Multi-Calendar Feature (from Version 1.1.0)
 
 == Changelog ==
+= 1.3.2 =
+25.02.23: fix Fatal Internal Error with PHP 8.x when CalendarExcludes is empty
+
 = 1.3.1 =
 24.02.23: show PHP Version upon Plugin Activation, issue Warning for PHP >= 8.0
 
