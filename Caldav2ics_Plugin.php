@@ -451,6 +451,8 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				fwrite($handle, 'END:VCALENDAR'."\r\n");
 				if ((!$found_ical_data) && ($LogEnabled))	{
 					fwrite($loghandle, "WARNING: no valid Ical Data found in Server Response !\r\n");
+					fwrite($loghandle, "Server Response:\r\n");	// improve Logging 27.02.23
+					fwrite($loghandle, $body_r);	
 				}
 				If (is_resource($handle)) {	
 					// looks ok WJ
