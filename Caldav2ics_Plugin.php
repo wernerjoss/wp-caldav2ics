@@ -395,8 +395,13 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				}
 				// new Action if Server does not write valid VTIMEZONE entry 14.01.23	WJ
 				if ( !$wroteTZ ) {
-					if ($LogEnabled)	fwrite($loghandle, "no valid TIMEZONE Info found in Server response, aborting !\r\n");
-					fclose($handle);
+					if ($LogEnabled)	{
+						fwrite($loghandle, "no valid TIMEZONE Info found in Server response, aborting !\r\n");
+						fwrite($loghandle, "Server Response:\r\n");	// improve Logging 27.02.23
+						fwrite($loghandle, $body_r);	
+						fclose($loghandle);
+					}
+					//	fclose($handle);	// handle should still be null in this case !
 					return;
 				}
 				if ($LogEnabled)	fwrite($loghandle, "Lines processed: ".$l."\r\n");
