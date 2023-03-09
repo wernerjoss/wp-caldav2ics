@@ -79,6 +79,9 @@ or
 3. New Multi-Calendar Feature (from Version 1.1.0)
 
 == Changelog ==
+= 1.3.3 =
+09.03.23: do not stop ics Creation when no VTIMEZONE Block present in Server Response, check for BEGIN:VCALENDAR instead
+
 = 1.3.2 =
 25.02.23: fix Fatal Internal Error with PHP 8.x when CalendarExcludes is empty
 

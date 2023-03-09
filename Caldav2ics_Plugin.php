@@ -362,11 +362,45 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				// Parse events
 				// create valid ICS File with only ONE Vcalendar !	-	use simple approach from https://github.com/wernerjoss/caldav2ics (no XML Parsing !) 11.11.19
 
-				$skip = true;
-				$wroteTZ = false;
 				$lines[] = array();
 				$l = 0;
-				
+				$foundVCAL = false;
+				$handle = fopen($ICalFile, 'w') or die('Cannot open file:  '.$ICalFile);  
+								
+				foreach ($text as $line)   {
+					$line = trim($line);
+					//	var_dump($line);
+					if (strlen($line) > 0)	{
+						$l++;
+						if ($LogEnabled)	fwrite($loghandle, $line."\r\n");	// sieht an sich gut aus, ABER alles weitere wird nicht erkannt !!! - ist ja auch nur 1 Zeile :)
+						if ( !$foundVCAL )	{
+							if (strpos($line,'BEGIN:VCALENDAR') !== false)	{	// NOT $this->startswith ! 09.03.23
+								// write VCALENDAR header only if valid VCALENDAR data found
+								fwrite($handle, 'BEGIN:VCALENDAR'."\r\n");	
+								fwrite($handle, 'VERSION:2.0'."\r\n");		
+								fwrite($handle, 'PRODID:-//hoernerfranzracing/caldav2ics.php'."\r\n");	
+								// End JPG modification 
+							}
+							if ($this->startswith($line,'END:VCALENDAR'))	{
+								$foundVCAL = true;    // only write VTIMEZONE entry once
+							}
+						}
+					}
+				}
+				// new Action if Server does not write valid VCALENDAR entry 09.03.23	WJ
+				if ( !$foundVCAL ) {
+					if ($LogEnabled)	{
+						fwrite($loghandle, "no valid VCALENDAR Data found in Server response, aborting !\r\n");
+						fwrite($loghandle, "Server Response:\r\n");	// improve Logging 27.02.23
+						fwrite($loghandle, $body_r);	
+						fclose($loghandle);
+					}
+					fclose($handle);
+					return;
+				}
+				// search and write VTIMEZONE Block 09.03.23
+				$skip = true;
+				$wroteTZ = false;
 				foreach ($text as $line)   {
 					$line = trim($line);
 					//	var_dump($line);
@@ -375,12 +409,6 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 						if ($LogEnabled)	fwrite($loghandle, $line."\r\n");	// sieht an sich gut aus, ABER alles weitere wird nicht erkannt !!! - ist ja auch nur 1 Zeile :)
 						if ( !$wroteTZ )	{
 							if ($this->startswith($line,'BEGIN:VTIMEZONE'))	{	// must be $this->startswith ! 11.11.19
-								// write VCALENDAR header only if valid TIMEZONE data found
-								$handle = fopen($ICalFile, 'w') or die('Cannot open file:  '.$ICalFile);  
-								fwrite($handle, 'BEGIN:VCALENDAR'."\r\n");	
-								fwrite($handle, 'VERSION:2.0'."\r\n");		
-								fwrite($handle, 'PRODID:-//hoernerfranzracing/caldav2ics.php'."\r\n");	
-								// End JPG modification 
 								$skip = false;
 							}
 							if ( !$skip )	{
@@ -392,17 +420,6 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 							}
 						}
 					}
-				}
-				// new Action if Server does not write valid VTIMEZONE entry 14.01.23	WJ
-				if ( !$wroteTZ ) {
-					if ($LogEnabled)	{
-						fwrite($loghandle, "no valid TIMEZONE Info found in Server response, aborting !\r\n");
-						fwrite($loghandle, "Server Response:\r\n");	// improve Logging 27.02.23
-						fwrite($loghandle, $body_r);	
-						fclose($loghandle);
-					}
-					//	fclose($handle);	// handle should still be null in this case !
-					return;
 				}
 				if ($LogEnabled)	fwrite($loghandle, "Lines processed: ".$l."\r\n");
 				// parse $response, do NOT write VCALENDAR header for each one, just the event data
