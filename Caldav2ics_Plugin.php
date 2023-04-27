@@ -365,7 +365,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				$lines[] = array();
 				$l = 0;
 				$foundVCAL = false;
-				$handle = fopen($ICalFile, 'w') or die('Cannot open file:  '.$ICalFile);  
+				//	$handle = fopen($ICalFile, 'w') or die('Cannot open file:  '.$ICalFile);  // moved, avoid empty $ICalFile in case server does not respond 26.04.23
 								
 				foreach ($text as $line)   {
 					$line = trim($line);
@@ -376,6 +376,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 						if ( !$foundVCAL )	{
 							if (strpos($line,'BEGIN:VCALENDAR') !== false)	{	// NOT $this->startswith ! 09.03.23
 								// write VCALENDAR header only if valid VCALENDAR data found
+								$handle = fopen($ICalFile, 'w') or die('Cannot open file:  '.$ICalFile);  // moved here, JPGehrke 26.04.23
 								fwrite($handle, 'BEGIN:VCALENDAR'."\r\n");	
 								fwrite($handle, 'VERSION:2.0'."\r\n");		
 								fwrite($handle, 'PRODID:-//hoernerfranzracing/caldav2ics.php'."\r\n");	
@@ -395,7 +396,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 						fwrite($loghandle, $body_r);	
 						fclose($loghandle);
 					}
-					fclose($handle);
+					//	fclose($handle);	// $handle will now be invalid in this case 26.04.23
 					return;
 				}
 				// search and write VTIMEZONE Block 09.03.23
