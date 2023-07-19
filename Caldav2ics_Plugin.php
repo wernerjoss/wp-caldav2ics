@@ -427,12 +427,12 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				$skip = true;
 				$found_ical_data = false;
 				foreach ($text as $line) {
-					// $line = trim($line,"\n");	//mod. by J-P. Gehrke, original code was $line = trim($line)
+					// $line = trim($line,"\n");	//mod. by J-P. Gehrke, original code was $line = trim($line) - turns out to be prolematic, see below..
 					/** This is important modification. The ics files from my CALDAV server contains info in long lines that are wrapped. By just "trimming" also leading spaces of the wrapped lines will 
 					* be eliminated. This creates problems using https://icalfilter.com reading the *.ics file. Therefore it is proposed useing the command "trim($line, "\n").
 					*/
 					
-					$line = trim($line,"\n\r\t\v\x00");	// mod. 17.07.23 WJ
+					$line = trim($line,"\n\r\t\v\x00");	// mod. 17.07.23 WJ, see https://wordpress.org/support/topic/converted-openxchange-calendar-subscibe-to-google-didnt-work/
 
 					if (strlen($line) > 0)	{
 						$invalidLine = false;
@@ -463,7 +463,6 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 						}
 						if ( !$skip && !$invalidLine)	{  
 							fwrite($handle, $line."\r\n");
-							//	fwrite($handle, $line."\r");	// skip LF, not yet active, mod. 17.07.23 WJ
 						}
 					}
 				}

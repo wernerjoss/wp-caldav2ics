@@ -79,6 +79,9 @@ or
 3. New Multi-Calendar Feature (from Version 1.1.0)
 
 == Changelog ==
+= 1.3.4 =
+19.07.23: fix wrong (insufficient) trim() Modification
+
 = 1.3.3 =
 09.03.23: do not stop ics Creation when no VTIMEZONE Block present in Server Response, check for BEGIN:VCALENDAR instead
 
