@@ -79,6 +79,9 @@ or
 3. New Multi-Calendar Feature (from Version 1.1.0)
 
 == Changelog ==
+= 1.3.5 =
+26.08.23: make Timeout for http request configurable via sql Statement
+
 = 1.3.4 =
 19.07.23: fix wrong (insufficient) trim() Modification
 

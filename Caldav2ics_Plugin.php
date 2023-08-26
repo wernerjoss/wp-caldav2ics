@@ -2,8 +2,7 @@
 /*
 11.11.19: neuer Parser ohne das XML Gedöns :)
 20.11.19: Warnung in Ical File wenn Server Antwort keine Kalenderdaten enthält
-Jan 2023: several modifications in the code made by Jörg-Peter Gehrke, send to W. Joss for review
-13.01.23: 1st review by WJ, NOT finished yet !
+all else: see Changelog :-)
 */
 
 include_once('Caldav2ics_LifeCycle.php');
@@ -254,6 +253,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		$CalendarPWs = unserialize($CalendarOptions['caldav2ics_calendar_passwords']);
 		$CalendarFiles = unserialize($CalendarOptions['caldav2ics_calendar_files']);
 		$CalendarExcludes = unserialize($CalendarOptions['caldav2ics_calendar_excludes']);
+		$RequestTimeouts = unserialize($CalendarOptions['caldav2ics_calendar_timeouts']);
 		$index = 0;	// NICHT 1 !
 		// DONE: NICHT alles in EINE Datei schreiben - s.u. :) 23.03.19
 		foreach ($CalendarURLs as $CalendarURL) {
@@ -277,10 +277,16 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				$excludekeys = array_keys($CalendarExcludes);
 				$CalendarExclude = $CalendarExcludes[$excludekeys[$index]];
 			}
+			$RequestTimeout = '10';	//	default, now configurable via Options ! 26.08.23
+			if (is_array($RequestTimeouts))	{	// DAS (ohne Test is_array()) verursachte fatalen internen Fehler ab PHP 8.0 ! 25.02.23 WJ
+				$timeoutkeys = array_keys($RequestTimeouts);
+				$RequestTimeout = $RequestTimeouts[$timeoutkeys[$index]];
+			}
 			if ($LogEnabled)	{
 				fwrite($loghandle, "CalendarURL:".$CalendarURL."\n");
 				fwrite($loghandle, "Max. attempts for data withdrawal from CALDAV server :" .$maxAttempts. " \r\n");
 				fwrite($loghandle, "CalendarExclude:".$CalendarExclude."\n"); 	// new 24.01.23
+				fwrite($loghandle, "RequestTimeout:".$RequestTimeout."\n"); 	// new 26.08.23
 			}	
 			
 			// Simple caching system, feel free to change the delay
@@ -316,7 +322,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				
 				// new approach using wp_remote_request() 16.11.18
 				$args = array(
-				'timeout'=> 10 ,		//IMPORTANT !! ensures appropriate time for response from CALDAV server
+				'timeout'=> $RequestTimeout,		//IMPORTANT !! ensures appropriate time for response from CALDAV server
 				'headers' => array(
 				'Authorization' => 'Basic '. base64_encode( $CalendarUser . ':' . $CalendarPW ),
 				'Content-Type' => 'application/xml; charset=utf-8',
@@ -335,11 +341,6 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 					// retrieve body from response:
 					$body = wp_remote_retrieve_body($response);
 					$body_r = print_r($body, true);  // keep string array representation of body for logging and analysis 13.01.19
-					/*
-					print_r($body);
-					*/
-					// Get the useful part of the response
-				
 					// write body_r to temporary file so it can be read as string array 11.11.19
 					$ResFile = get_temp_dir()."result.txt";
 					$reshandle = fopen($ResFile, 'w');
@@ -403,7 +404,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				$skip = true;
 				$wroteTZ = false;
 				foreach ($text as $line)   {
-					$line = trim($line);
+					$line = trim($line,"\n\r\t\v\x00");
 					//	var_dump($line);
 					if (strlen($line) > 0)	{
 						$l++;
@@ -531,6 +532,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			'caldav2ics_calendar_passwords' => array(),
 			'caldav2ics_calendar_files' => array(),
 			'caldav2ics_calendar_excludes' => array(),	// new 24.01.23
+			'caldav2ics_calendar_timeouts' => array(),	// new 24.01.23
 		);
 		// wichtig !!!:
 		$CalendarOptions['caldav2ics_calendar_urls' ] = get_option('caldav2ics_calendar_urls' );
@@ -538,6 +540,7 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		$CalendarOptions['caldav2ics_calendar_passwords' ]= get_option('caldav2ics_calendar_passwords' );
 		$CalendarOptions['caldav2ics_calendar_files' ]= get_option('caldav2ics_calendar_files' );
 		$CalendarOptions['caldav2ics_calendar_excludes' ]= get_option('caldav2ics_calendar_excludes' );	// new 24.01.23
+		$CalendarOptions['caldav2ics_calendar_timeouts' ]= get_option('caldav2ics_calendar_timeouts' );	// new 26.08.23
 		return $CalendarOptions;
 	}
 	
