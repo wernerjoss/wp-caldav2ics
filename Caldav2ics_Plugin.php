@@ -275,12 +275,14 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 			$CalendarExclude = "";	//	default
 			if (is_array($CalendarExcludes))	{	// DAS (ohne Test is_array()) verursachte fatalen internen Fehler ab PHP 8.0 ! 25.02.23 WJ
 				$excludekeys = array_keys($CalendarExcludes);
-				$CalendarExclude = $CalendarExcludes[$excludekeys[$index]];
+				if (array_key_exists($index, $excludekeys))	// check if key exists 27.08.23
+					$CalendarExclude = $CalendarExcludes[$excludekeys[$index]];
 			}
 			$RequestTimeout = '10';	//	default, now configurable via Options ! 26.08.23
 			if (is_array($RequestTimeouts))	{	// DAS (ohne Test is_array()) verursachte fatalen internen Fehler ab PHP 8.0 ! 25.02.23 WJ
 				$timeoutkeys = array_keys($RequestTimeouts);
-				$RequestTimeout = $RequestTimeouts[$timeoutkeys[$index]];
+				if (array_key_exists($index, $timeoutkeys))	// check if key exists 27.08.23
+					$RequestTimeout = $RequestTimeouts[$timeoutkeys[$index]];
 			}
 			if ($LogEnabled)	{
 				fwrite($loghandle, "CalendarURL:".$CalendarURL."\n");
@@ -332,7 +334,8 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				'body' => $body,
 				);
 		
-				$numAttempts = 1;							
+				$numAttempts = 1;	
+				$minFileSize = 100;	// 27.08.23						
 				While ($numAttempts <= $maxAttempts) {				
 					$jpgdate = new DateTime(); 				
 					$jpgdate = $jpgdate->format("YmdHis"); 				
@@ -346,17 +349,26 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 					$reshandle = fopen($ResFile, 'w');
 					fwrite($reshandle, $body_r);
 					fclose($reshandle);
-					$jpgfsize = filesize($ResFile); 	 		
+					$ResFileSize = filesize($ResFile); 	 		
 					$text = file($ResFile);
 					if ($LogEnabled)	{
-						fwrite($loghandle, "using temp file: ".$ResFile." for Server Response at time: ".$jpgdate." numAttempts: ".$numAttempts." size $ resfile :".$jpgfsize."b \r\n");
+						fwrite($loghandle, "using temp file: ".$ResFile." for Server Response at time: ".$jpgdate." numAttempts: ".$numAttempts." size $ resfile :".$ResFileSize."b \r\n");
 					}							
-					If ($jpgfsize > 100)	{				// 100 b as file size choosen
-						$numAttempts = 100;				
+					If ($ResFileSize > $minFileSize)	{				// 100 b as file size choosen
+						$numAttempts = $maxAttempts;				// better than 100 :-)
 					}							
 					$numAttempts++;						
 				}
-				
+				if ( $ResFileSize < $minFileSize ) {
+					if ($LogEnabled)	{
+						fwrite($loghandle, "no valid Data found in Server response for ".$CalendarURL.", after ".$maxAttempts." tries, aborting !\r\n");
+						fwrite($loghandle, "Server Response:\r\n");
+						fwrite($loghandle, $body_r);	
+						//	fclose($loghandle);	// important 27.08.23 !!
+					}
+					//	return;	// this will prevent all remaining calendars to be processed, so better use break, 27.08.23
+					break;
+				}
 				//	TODO: handle data retrieve failure correctly, see e.g. 
 				//	https://developer.wordpress.org/reference/functions/wp_remote_request/	WJ 14.01.23
 
@@ -392,13 +404,14 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				// new Action if Server does not write valid VCALENDAR entry 09.03.23	WJ
 				if ( !$foundVCAL ) {
 					if ($LogEnabled)	{
-						fwrite($loghandle, "no valid VCALENDAR Data found in Server response, aborting !\r\n");
+						fwrite($loghandle, "no valid VCALENDAR Data found in Server response for ".$CalendarURL.", aborting !\r\n");
 						fwrite($loghandle, "Server Response:\r\n");	// improve Logging 27.02.23
 						fwrite($loghandle, $body_r);	
 						fclose($loghandle);
 					}
 					//	fclose($handle);	// $handle will now be invalid in this case 26.04.23
-					return;
+					//	return;	// this will prevent all remaining calendars to be processed, so better use break, 27.08.23
+					break;
 				}
 				// search and write VTIMEZONE Block 09.03.23
 				$skip = true;
