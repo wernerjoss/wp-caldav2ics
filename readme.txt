@@ -79,6 +79,9 @@ or
 3. New Multi-Calendar Feature (from Version 1.1.0)
 
 == Changelog ==
+= 1.3.6 =
+17.11.23: new Approach to configure Timeout for http request via wp-config.php - just add a Line like 'define( 'CALDAV_TIMEOUT', '30' );'
+
 = 1.3.5 =
 26.08.23: make Timeout for http request configurable via sql Statement
 
