@@ -5,7 +5,7 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 4.4
 Tested up to: 6.1
-Stable tag: 1.3.4
+Stable tag: 1.3.6
 Requires PHP: 5.6
 
 Automatically create ICS File from CalDav Calendar
