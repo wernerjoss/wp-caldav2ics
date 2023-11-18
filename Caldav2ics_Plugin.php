@@ -253,7 +253,6 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 		$CalendarPWs = unserialize($CalendarOptions['caldav2ics_calendar_passwords']);
 		$CalendarFiles = unserialize($CalendarOptions['caldav2ics_calendar_files']);
 		$CalendarExcludes = unserialize($CalendarOptions['caldav2ics_calendar_excludes']);
-		$RequestTimeouts = unserialize($CalendarOptions['caldav2ics_calendar_timeouts']);
 		$index = 0;	// NICHT 1 !
 		// DONE: NICHT alles in EINE Datei schreiben - s.u. :) 23.03.19
 		foreach ($CalendarURLs as $CalendarURL) {
@@ -278,16 +277,17 @@ class Caldav2ics_Plugin extends Caldav2ics_LifeCycle {
 				if (array_key_exists($index, $excludekeys))	// check if key exists 27.08.23
 					$CalendarExclude = $CalendarExcludes[$excludekeys[$index]];
 			}
-			$RequestTimeout = '10';	//	default, now configurable via Options ! 26.08.23
-			if (is_array($RequestTimeouts))	{	// DAS (ohne Test is_array()) verursachte fatalen internen Fehler ab PHP 8.0 ! 25.02.23 WJ
-				$timeoutkeys = array_keys($RequestTimeouts);
-				if (array_key_exists($index, $timeoutkeys))	// check if key exists 27.08.23
-					$RequestTimeout = $RequestTimeouts[$timeoutkeys[$index]];
-			}
+			$RequestTimeout = '20';	//	default, now configurable via CALDAV_TIMEOUT in wp-config.php 17.11.23
 			if ($LogEnabled)	{
 				fwrite($loghandle, "CalendarURL:".$CalendarURL."\n");
 				fwrite($loghandle, "Max. attempts for data withdrawal from CALDAV server :" .$maxAttempts. " \r\n");
 				fwrite($loghandle, "CalendarExclude:".$CalendarExclude."\n"); 	// new 24.01.23
+				if (defined('CALDAV_TIMEOUT')) {
+					fwrite($loghandle, "CALDAV_TIMEOUT:".CALDAV_TIMEOUT."\n");	// new 17.11.23
+					if (intval(CALDAV_TIMEOUT) > 0)	{
+						$RequestTimeout = CALDAV_TIMEOUT;
+					}
+				}
 				fwrite($loghandle, "RequestTimeout:".$RequestTimeout."\n"); 	// new 26.08.23
 			}	
 			
