@@ -43,3 +43,8 @@ GitHub zip Download, you can also just upload all Files (including those in Subd
 3. New Multi-Calendar Feature (from Version 1.1.0):  ![](./screenshot-3.png)
 
 For additional Information, please refer to the [WP readme.txt File](./readme.txt)
+
+### Additional Notes
+As I'm currently using [Grav](https://getgrav.org) as my favourite CMS, alternatively [Contao](https://contao.org), I won't do any more Plugin Development for Wordpress.  
+This Plugin is just a Leftover and get some Attention from Time to Time, but there is no Guarantee.  
+However, this Repo on GitHub will for sure exist longer than that in the [WP Repo](https://wordpress.org/plugins/wp-caldav2ics/) which will probably be deleted at some Point in the Future (e.g. when WP will change their API significantly).
