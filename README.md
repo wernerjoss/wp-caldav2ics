@@ -1,5 +1,7 @@
 ## Automatically create ICS File from CalDav Calendar
 
+## please note that this Plugin is no longer supported an will be archived soon, as I have given up on Grav development since my switch to [Hugo](https://gohugo.io) in 2024.
+
 ### Description
 
 Ever thought about to use your (remote) CalDav Calendar(s) as an automatic data source for your favourite WP Calendar Plugin ?
